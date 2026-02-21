@@ -36,19 +36,6 @@
         .nav-item.active { color: #137fec !important; }
         .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
-        /* Print mode - controlled by body class */
-        body.printing > *:not(.print-content) { 
-            display: none !important; 
-        }
-        
-        body.printing .print-content {
-            display: block !important;
-            position: static !important;
-            width: 100% !important;
-            height: auto !important;
-            visibility: visible !important;
-        }
-
         @media print {
             @page { 
                 size: A4; 
@@ -66,16 +53,20 @@
                 padding: 0 !important;
             }
             
-            /* In print mode, hide everything except print-content */
-            body > *:not(.print-content) { 
-                display: none !important; 
+            /* Robust printing: Hide everything, then show/position target */
+            body * {
+                visibility: hidden;
             }
             
-            .print-content { 
-                display: block !important; 
-                position: static !important;
+            .print-content, .print-content * {
+                visibility: visible;
+            }
+            
+            .print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
                 width: 100% !important;
-                visibility: visible !important;
             }
             
             .no-print { 
@@ -704,14 +695,13 @@
             
             // Show content
             printArea.classList.add('print-content');
+            const originalDisplay = printArea.style.display;
             printArea.style.display = 'block';
-            document.body.classList.add('printing');
             
             // Cleanup function
             const cleanup = () => {
                 printArea.classList.remove('print-content');
-                printArea.style.display = 'none';
-                document.body.classList.remove('printing');
+                printArea.style.display = originalDisplay;
                 window.removeEventListener('afterprint', cleanup);
             };
             
