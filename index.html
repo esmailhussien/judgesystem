@@ -606,17 +606,7 @@
             document.getElementById('printTableBody').innerHTML = tbody;
             
             // Show print area
-            const printArea = document.getElementById('printMainListArea');
-            printArea.classList.add('print-content');
-            printArea.style.display = 'block';
-            document.body.classList.add('printing');
-            
-            setTimeout(() => {
-                window.print();
-                printArea.classList.remove('print-content');
-                printArea.style.display = 'none';
-                document.body.classList.remove('printing');
-            }, 200);
+            handlePrint('printMainListArea');
         }
 
         // --- Referee Functions ---
@@ -706,17 +696,32 @@
             }
             
             // Show print area
-            const printArea = document.getElementById('printCVArea');
+            handlePrint('printCVArea');
+        }
+
+        function handlePrint(areaId) {
+            const printArea = document.getElementById(areaId);
+            
+            // Show content
             printArea.classList.add('print-content');
             printArea.style.display = 'block';
             document.body.classList.add('printing');
             
-            setTimeout(() => {
-                window.print();
+            // Cleanup function
+            const cleanup = () => {
                 printArea.classList.remove('print-content');
                 printArea.style.display = 'none';
                 document.body.classList.remove('printing');
-            }, 200);
+                window.removeEventListener('afterprint', cleanup);
+            };
+            
+            // Listen for print finish
+            window.addEventListener('afterprint', cleanup);
+            
+            // Wait for rendering
+            setTimeout(() => {
+                window.print();
+            }, 500);
         }
     </script>
 </body>
