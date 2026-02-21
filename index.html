@@ -35,35 +35,49 @@
         .nav-item.active { color: #137fec !important; }
         .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
-        /* إعدادات الطباعة الاحترافية */
+        /* ================= إعدادات الطباعة القوية ضد التداخل والصفحات البيضاء ================= */
         @media print {
-            @page { size: A4; margin: 10mm; }
-            html, body { min-height: auto !important; height: auto !important; overflow: visible !important; background: white !important; }
+            @page { size: auto; margin: 10mm; }
+            html, body { 
+                background: white !important; 
+                min-height: auto !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
             
-            body > *:not(.print-target) { display: none !important; }
+            /* إخفاء كل الموقع افتراضياً في الطباعة */
+            body > * { display: none !important; }
             .no-print { display: none !important; }
             
-            .print-target { 
+            /* إظهار الجزء المستهدف فقط كعنصر أساسي لضمان عمل الطباعة */
+            body > .print-target { 
                 display: block !important; 
-                position: absolute !important; 
-                left: 0 !important; 
-                top: 0 !important; 
+                position: static !important; 
                 width: 100% !important; 
                 height: auto !important; 
                 visibility: visible !important; 
                 background: white !important; 
                 overflow: visible !important; 
                 transform: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
+            
             .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
-            /* تنسيق السيرة الذاتية في الطباعة */
-            #reportModal.print-target { position: static !important; padding: 0 !important; }
-            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; overflow: visible !important; transform: none !important; }
+            /* إزالة أي خلفيات معتمة للمودال لتجنب الشاشة البيضاء */
+            #reportModal.print-target { background: none !important; backdrop-filter: none !important; position: static !important; padding: 0 !important; display: block !important; }
+            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; border-radius: 0 !important; overflow: visible !important; transform: none !important; background: white !important; }
+            
             .print-target .min-h-screen { min-height: 0 !important; }
             
-            /* تنسيق الجداول في الطباعة */
-            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
+            /* جداول الطباعة */
+            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; page-break-inside: auto; }
+            table.print-table tr { page-break-inside: avoid; page-break-after: auto; }
             table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; color: #000; }
             table.print-table th { background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; color: #000; }
             .court-header { background-color: #cbd5e1 !important; font-weight: bold; font-size: 16px; color: #000; }
@@ -107,10 +121,10 @@
                     </h1>
                 </div>
                 <div class="flex space-x-2 space-x-reverse h-full items-center">
-                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard" class="nav-btn active h-full px-3 py-2 text-slate-600 hover:text-blue-600">الإحصائيات</button>
-                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">الترشيح</button>
-                    <button onclick="showAdminScreen('records')" id="btn-admin-records" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">السجلات والملاعب</button>
-                    <button onclick="showAdminScreen('database')" id="btn-admin-database" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">قاعدة الحكام</button>
+                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard" class="nav-btn active h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">الإحصائيات</button>
+                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">الترشيح</button>
+                    <button onclick="showAdminScreen('records')" id="btn-admin-records" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">السجلات والملاعب</button>
+                    <button onclick="showAdminScreen('database')" id="btn-admin-database" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">قاعدة الحكام</button>
                     <button onclick="logout()" class="h-full px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg mr-2"><span class="material-symbols-outlined text-xl align-middle">logout</span></button>
                 </div>
             </div>
@@ -166,6 +180,7 @@
                     <button onclick="loadRecords()" class="text-primary hover:bg-blue-50 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
                 </div>
                 <input type="text" id="searchTournamentHistory" onkeyup="filterRecords()" placeholder="ابحث باسم البطولة..." class="stitch-input mb-4">
+                
                 <div id="recordsArea" class="space-y-4 pb-10"></div>
             </section>
 
@@ -221,9 +236,11 @@
                 <h2 class="font-bold text-lg text-slate-800">صندوق الدعوات</h2>
                 <button onclick="loadMyInvitations()" class="text-primary text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
             </div>
+            
             <div id="invitationsArea" class="space-y-4 min-h-[50vh]"></div>
+            
             <button onclick="openReport(currentLoggedInJudge.JudgeID)" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold shadow-md flex items-center justify-center gap-2 transition-colors">
-                <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي
+                <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي (CV)
             </button>
         </main>
     </div>
@@ -242,8 +259,8 @@
     </div>
 
     <div id="reportModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="min-h-screen px-4 text-center">
-            <div class="inline-block w-full max-w-md my-8 text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
+        <div class="min-h-screen px-4 text-center flex items-center justify-center py-10">
+            <div class="inline-block w-full max-w-md text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
                 <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-4 h-14 flex items-center justify-between">
                     <button onclick="closeReport()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full no-print"><span class="material-symbols-outlined">close</span></button>
                     <h1 class="text-sm font-bold text-slate-800">السيرة الذاتية (CV)</h1>
@@ -283,6 +300,18 @@
         function createEl(tag, className, innerHTML = '') { const el = document.createElement(tag); if(className) el.className = className; if(innerHTML) el.innerHTML = innerHTML; return el; }
 
         function initApp() { document.getElementById('login-view').style.display = 'flex'; }
+
+        // --- Cleanup Print Utility (المسؤول عن إعادة الإخفاء بعد الطباعة) ---
+        function cleanupPrint() {
+            document.querySelectorAll('.print-target').forEach(el => {
+                el.classList.remove('print-target');
+                if(el.id === 'printMainListArea') {
+                    el.classList.add('hidden', 'no-print');
+                }
+            });
+        }
+        // الاستماع لحدث إغلاق نافذة الطباعة لتنظيف الفئات بأمان
+        window.addEventListener('afterprint', cleanupPrint);
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -453,11 +482,7 @@
             }
         }
 
-        function changeDistributionCourt(index, newCourt) {
-            currentDistribution[index].court = parseInt(newCourt);
-            renderCourtDistribution();
-        }
-
+        function changeDistributionCourt(index, newCourt) { currentDistribution[index].court = parseInt(newCourt); renderCourtDistribution(); }
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
         function printCourtDistribution() {
@@ -480,13 +505,12 @@
             printArea.classList.remove('hidden', 'no-print'); 
             printArea.classList.add('print-target');
             
+            // تأخير زمني للسماح للمتصفح برسم الجدول قبل فتح نافذة الطباعة
             setTimeout(() => {
                 window.print();
-                setTimeout(() => {
-                    printArea.classList.add('hidden', 'no-print'); 
-                    printArea.classList.remove('print-target');
-                }, 500);
-            }, 150);
+                // سيتم التنظيف تلقائياً بواسطة onafterprint، ولكن نضع هذا للاحتياط
+                setTimeout(cleanupPrint, 3000); 
+            }, 300);
         }
 
         async function loadMyInvitations() {
@@ -538,20 +562,17 @@
                 }
             } catch(e) {}
         }
+        
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
         
         function printReport() { 
             const modal = document.getElementById('reportModal'); 
-            modal.classList.remove('no-print'); 
             modal.classList.add('print-target'); 
             
             setTimeout(() => {
                 window.print(); 
-                setTimeout(() => {
-                    modal.classList.add('no-print'); 
-                    modal.classList.remove('print-target'); 
-                }, 500);
-            }, 150);
+                setTimeout(cleanupPrint, 3000); 
+            }, 300);
         }
     </script>
 </body>
