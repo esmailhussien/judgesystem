@@ -82,7 +82,7 @@
                 visibility: visible !important;
             }
             
-            /* Hide print buttons */
+            /* Hide print buttons and navigation */
             .no-print { 
                 display: none !important; 
             }
@@ -320,7 +320,7 @@
     <div id="reportModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
         <div class="min-h-screen px-4 text-center">
             <div class="inline-block w-full max-w-md my-8 text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
-                <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-4 h-14 flex items-center justify-between no-print">
+                <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-4 h-14 flex items-center justify-between">
                     <button onclick="closeReport()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full no-print"><span class="material-symbols-outlined">close</span></button>
                     <h1 class="text-sm font-bold text-slate-800">السيرة الذاتية (CV)</h1>
                     <button onclick="printReport()" class="p-2 text-primary hover:bg-blue-50 rounded-full no-print"><span class="material-symbols-outlined">print</span></button>
@@ -351,7 +351,6 @@
         </div>
     </div>
 
-    <!-- Print Area for Court Distribution -->
     <div id="printMainListArea" class="hidden no-print">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;" class="print-break-inside-avoid">
             <h1 style="font-size:22px; font-weight:bold; margin-bottom:5px;">لجنة الحكام الرئيسية</h1>
@@ -414,160 +413,156 @@
             document.querySelectorAll('#admin-view header .nav-btn').forEach(btn => { btn.classList.remove('active', 'text-blue-600'); btn.classList.add('text-slate-600'); });
             const activeTopBtn = document.getElementById(`btn-admin-${id}`); if(activeTopBtn) { activeTopBtn.classList.add('active', 'text-blue-600'); activeTopBtn.classList.remove('text-slate-600'); }
             
-            // تحديث قوائم الموبايل
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            const activeNavItem = document.getElementById(`nav-admin-${id}`); if(activeNavItem) activeNavItem.classList.add('active');
+            // تحديث قائمة الموبايل السفلية
+            document.querySelectorAll('#admin-view .nav-item').forEach(btn => { btn.classList.remove('active', 'text-primary'); btn.classList.add('text-slate-400'); });
+            const activeBotBtn = document.getElementById(`nav-admin-${id}`); if(activeBotBtn) { activeBotBtn.classList.add('active', 'text-primary'); activeBotBtn.classList.remove('text-slate-400'); }
             
             document.getElementById(`admin-screen-${id}`).classList.remove('hidden');
-            if(id === 'dashboard') { loadKpis(); } else if(id === 'records') { loadRecords(); } else if(id === 'database') { loadAllJudges(); }
+            if(id === 'dashboard') loadDashboard(); if(id === 'database') loadAllJudges(); if(id === 'records') loadRecords(); 
         }
 
-        // --- Admin Dashboard KPIs ---
-        async function loadKpis() {
+        // --- Admin Functions ---
+        async function loadDashboard() {
             try {
-                const res = await fetch(`${API_URL}&action=getJudgesKPI`).then(r=>r.json());
+                const res = await fetch(`${API_URL}&action=getDashboardStats`).then(r=>r.json());
                 if(res.status === 'success') {
-                    document.getElementById('kpi-total').innerText = res.data.totalJudges || 0;
-                    document.getElementById('kpi-active').innerText = res.data.activeJudges || 0;
-                    document.getElementById('kpi-inactive').innerText = res.data.inactiveJudges || 0;
-                    document.getElementById('kpi-pending').innerText = res.data.pendingInvites || 0;
+                    document.getElementById('kpi-total').innerText = res.data.total; document.getElementById('kpi-active').innerText = res.data.active;
+                    document.getElementById('kpi-inactive').innerText = res.data.inactive; document.getElementById('kpi-pending').innerText = res.data.pendingNoms;
                 }
             } catch(e) {}
         }
 
-        // --- Nomination Functions ---
         async function getSuggestions() {
-            const tName = document.getElementById('tournamentName').value.trim();
-            const total = parseInt(document.getElementById('totalJudges').value);
-            const cats = { 'دولي': parseInt(document.getElementById('c_dwali').value), 'قاري': parseInt(document.getElementById('c_kari').value), 'اولى': parseInt(document.getElementById('c_oula').value), 'ثانية': parseInt(document.getElementById('c_thania').value), 'ثالثة': parseInt(document.getElementById('c_thalitha').value) };
-            const catSum = Object.values(cats).reduce((a, b) => a + b, 0);
-            if (!tName) { Swal.fire('تنبيه', 'اكتب اسم البطولة', 'warning'); return; }
-            if (total <= 0) { Swal.fire('تنبيه', 'أدخل عدد الحكام المطلوب', 'warning'); return; }
-            if (catSum !== total) { Swal.fire('تنبيه', `مجموع الفئات (${catSum}) لا يساوي العدد الكلي (${total})`, 'warning'); return; }
+            const tournament = document.getElementById('tournamentName').value.trim();
+            const totalJudges = parseInt(document.getElementById('totalJudges').value) || 0;
+            const c_dwali = parseInt(document.getElementById('c_dwali').value)||0, c_kari = parseInt(document.getElementById('c_kari').value)||0, c_oula = parseInt(document.getElementById('c_oula').value)||0, c_thania = parseInt(document.getElementById('c_thania').value)||0, c_thalitha = parseInt(document.getElementById('c_thalitha').value)||0;
+            if (!tournament || totalJudges <= 0) return Swal.fire('تنبيه', 'استكمل البيانات', 'warning');
+            if ((c_dwali + c_kari + c_oula + c_thania + c_thalitha) !== totalJudges) return Swal.fire('خطأ', 'مجموع الفئات لا يساوي العدد الكلي.', 'error');
 
-            Swal.fire({ title: 'جاري البحث...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            Swal.fire({title: 'جاري التوليد...', didOpen: () => Swal.showLoading()});
             try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'suggestJudges', data: { tournament: tName, categories: cats } }) });
-                const res = await response.json();
+                const url = `${API_URL}&action=getSmartSuggestions&c_dwali=${c_dwali}&c_kari=${c_kari}&c_oula=${c_oula}&c_thania=${c_thania}&c_thalitha=${c_thalitha}`;
+                const res = await fetch(url).then(r=>r.json());
                 if (res.status === 'success') {
-                    currentSuggestions = res.data; renderSuggestions(); Swal.fire('نجح', `تم توليد قائمة من ${res.data.length} حكام`, 'success');
-                } else { Swal.fire('خطأ', res.message, 'error'); }
-            } catch(e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
-        }
-
-        function renderSuggestions() {
-            const area = document.getElementById('suggestionsArea');
-            area.innerHTML = currentSuggestions.map((j, i) => {
-                const isSub = j.type && j.type === 'substitute';
-                const label = isSub ? '<div class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">بديل</div>' : '';
-                return `<div class="relative bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-primary transition-all hover:shadow-md">${label}<div class="flex items-center gap-3 mb-2"><img class="w-12 h-12 rounded-full object-cover border-2 border-primary/10" src="${j.Photo || `https://ui-avatars.com/api/?name=${j.Name}&background=fff&color=137fec`}"><div><h4 class="text-sm font-bold text-slate-900">${j.Name}</h4><p class="text-[10px] text-primary font-bold uppercase">${j.Category}</p></div></div><button onclick="removeJudge(${i})" class="absolute bottom-2 left-2 p-1 text-red-500 hover:bg-red-50 rounded-md"><span class="material-symbols-outlined text-sm">close</span></button></div>`;
-            }).join('');
-            document.getElementById('draftCount').innerText = currentSuggestions.length;
-            document.getElementById('resultsWrapper').classList.remove('hidden');
-        }
-
-        function removeJudge(idx) {
-            Swal.fire({ title: 'هل أنت متأكد؟', text: 'سيتم إزالة الحكم من القائمة', icon: 'warning', showCancelButton: true, confirmButtonText: 'إزالة', confirmButtonColor: '#ef4444' }).then(result => {
-                if (result.isConfirmed) { currentSuggestions.splice(idx, 1); renderSuggestions(); if(currentSuggestions.length === 0){ document.getElementById('resultsWrapper').classList.add('hidden'); } }
-            });
+                    currentSuggestions = res.data;
+                    document.getElementById('draftCount').innerText = currentSuggestions.length;
+                    document.getElementById('suggestionsArea').innerHTML = currentSuggestions.map((j) => `<div class="bg-white p-3 rounded-xl border flex justify-between items-center"><h5 class="font-bold text-sm text-slate-700">${j.Name}</h5><span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">${j.Category}</span></div>`).join('');
+                    document.getElementById('resultsWrapper').classList.remove('hidden'); Swal.close();
+                }
+            } catch(e) {}
         }
 
         async function saveFinalList() {
-            if(currentSuggestions.length === 0) { Swal.fire('تنبيه', 'لا يوجد حكام للإرسال', 'warning'); return; }
-            const tName = document.getElementById('tournamentName').value.trim();
-            const { isConfirmed } = await Swal.fire({ title: 'تأكيد الإرسال', text: `سيتم إرسال ${currentSuggestions.length} دعوة للحكام. متأكد؟`, icon: 'question', showCancelButton: true, confirmButtonText: 'نعم، إرسال' });
-            if(isConfirmed && !isSaving) {
-                isSaving = true; document.getElementById('saveBtn').disabled = true;
-                Swal.fire({ title: 'جاري الإرسال...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                try {
-                    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'inviteJudges', data: { tournament: tName, judges: currentSuggestions.map(j => ({ id: j.JudgeID, type: j.type || 'confirmed' })) } }) }).then(r=>r.json());
-                    if(res.status === 'success') {
-                        Swal.fire('تم بنجاح', res.data, 'success');
-                        currentSuggestions = []; renderSuggestions();
-                        document.getElementById('tournamentName').value = ''; document.getElementById('totalJudges').value = '0';
-                        ['c_dwali', 'c_kari', 'c_oula', 'c_thania', 'c_thalitha'].forEach(id => document.getElementById(id).value = '0');
-                        document.getElementById('resultsWrapper').classList.add('hidden');
-                    } else { Swal.fire('خطأ', res.message, 'error'); }
-                } catch(e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
-                finally { isSaving = false; document.getElementById('saveBtn').disabled = false; }
-            }
-        }
-
-        // --- Records & Courts ---
-        async function loadRecords() {
-            const area = document.getElementById('recordsArea'); area.innerHTML = '<div class="text-center p-8"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
+            if(isSaving || currentSuggestions.length === 0) return;
+            const tournament = document.getElementById('tournamentName').value.trim();
+            const confirmedList = currentSuggestions.map(j => ({id: j.JudgeID, name: j.Name, category: j.Category}));
+            const { isConfirmed } = await Swal.fire({title: 'إرسال الدعوات', text: 'سيتم إرسال دعوات للحكام، ويجب عليهم القبول لدخول التعيين النهائي.', icon: 'question', showCancelButton: true});
+            if (!isConfirmed) return;
+            isSaving = true; Swal.showLoading();
             try {
-                const res = await fetch(`${API_URL}&action=getTournamentRecords`).then(r=>r.json());
-                if(res.status === 'success') {
-                    tournamentsHistory = res.data;
-                    renderRecords(res.data);
-                }
-            } catch(e) {}
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'saveFinalList', data: { tournament, confirmed: confirmedList, apologized: [] } }) }).then(r=>r.json());
+                if(res.status === 'success') { Swal.fire('تم الإرسال', 'تم الإرسال بنجاح. تابع الردود من شاشة السجلات.', 'success'); document.getElementById('resultsWrapper').classList.add('hidden'); document.getElementById('tournamentName').value=''; }
+            } catch(e) {} finally { isSaving = false; }
         }
 
-        function renderRecords(data) {
-            const area = document.getElementById('recordsArea');
-            if(data.length === 0) {
-                area.innerHTML = '<div class="bg-white rounded-3xl p-6 border shadow-sm text-center"><div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-3xl text-primary">assignment</span></div><h2 class="font-bold text-lg text-slate-800">لا توجد بطولات مسجلة حتى الآن</h2></div>';
-            } else {
-                area.innerHTML = data.map(t => {
-                    const statusBadge = t.hasDistribution === 'yes'
-                        ? '<span class="text-green-600 text-xs font-bold bg-green-50 px-3 py-1 rounded-full border border-green-200">تم التوزيع</span>'
-                        : '<span class="text-orange-600 text-xs font-bold bg-orange-50 px-3 py-1 rounded-full border border-orange-200">في انتظار التوزيع</span>';
-                    return `<div class="bg-white p-5 rounded-2xl border shadow-sm hover:shadow-md transition-all"><div class="flex justify-between items-start mb-3"><h3 class="text-lg font-bold text-slate-800">${t.tournament}</h3>${statusBadge}</div><p class="text-xs text-slate-500 mb-3">تاريخ: ${t.date}</p><div class="flex gap-2"><button onclick="openCourtDistribution('${t.tournament}')" class="flex-1 bg-primary/10 hover:bg-primary hover:text-white text-primary font-bold py-2 px-4 rounded-xl transition-all text-sm shadow-sm flex items-center justify-center gap-1"><span class="material-symbols-outlined text-sm">view_list</span> عرض وتوزيع الملاعب</button></div></div>`;
-                }).join('');
-            }
+        // --- Records & Interactive Court Distribution ---
+        async function loadRecords() {
+            document.getElementById('recordsArea').innerHTML = '<div class="text-center p-6"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
+            try {
+                const res = await fetch(`${API_URL}&action=getTournamentsHistory`).then(r=>r.json());
+                if(res.status === 'success') { tournamentsHistory = res.data; renderRecords(tournamentsHistory); }
+            } catch(e) { document.getElementById('recordsArea').innerHTML = '<div class="text-center text-red-500">فشل التحميل</div>'; }
         }
 
         function filterRecords() {
-            const query = document.getElementById('searchTournamentHistory').value.trim().toLowerCase();
-            const filtered = tournamentsHistory.filter(t => t.tournament.toLowerCase().includes(query));
+            const text = document.getElementById('searchTournamentHistory').value.toLowerCase();
+            const filtered = tournamentsHistory.filter(t => t.tournament.toLowerCase().includes(text));
             renderRecords(filtered);
         }
 
-        async function openCourtDistribution(tournament) {
-            Swal.showLoading();
-            try {
-                const res = await fetch(`${API_URL}&action=getTournamentJudges&tournament=${encodeURIComponent(tournament)}`).then(r=>r.json());
-                if(res.status === 'success') {
-                    currentDistribution = res.data.judges.map(j => ({ ...j, court: j.court || 1 }));
-                    currentDistCourtsCount = res.data.courtsCount || 1;
-                    currentDistTournament = tournament;
-                    document.getElementById('distTournamentName').innerText = tournament;
-                    renderCourtDistribution();
-                    document.getElementById('courtDistributionModal').classList.remove('hidden');
-                    Swal.close();
+        function renderRecords(data) {
+            const area = document.getElementById('recordsArea'); area.innerHTML = '';
+            if(data.length === 0) { area.innerHTML = `<div class="text-center text-slate-500 p-6">لا توجد بطولات</div>`; return; }
+
+            data.forEach(t => {
+                const card = createEl('div', 'bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md');
+                const head = createEl('div', 'flex justify-between items-center border-b border-slate-100 pb-3 mb-3');
+                head.innerHTML = `<h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><span class="material-symbols-outlined text-primary">emoji_events</span>${t.tournament}</h3><span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">${t.date}</span>`;
+                card.appendChild(head);
+
+                const body = createEl('div', 'space-y-3');
+                if (t.confirmed.length > 0) body.innerHTML += `<div><h4 class="text-xs font-bold text-green-600 mb-1">تم التعيين (${t.confirmed.length}):</h4><div class="flex flex-wrap">${t.confirmed.map(j => `<span class="inline-block bg-green-50 text-green-700 text-[11px] font-bold px-2 py-1 rounded border border-green-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
+                if (t.pending.length > 0) body.innerHTML += `<div class="pt-2 border-t border-slate-50"><h4 class="text-xs font-bold text-orange-500 mb-1">دعوات بالانتظار (${t.pending.length}):</h4><div class="flex flex-wrap">${t.pending.map(j => `<span class="inline-block bg-orange-50 text-orange-700 text-[11px] font-bold px-2 py-1 rounded border border-orange-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
+                if (t.apologized.length > 0) body.innerHTML += `<div class="pt-2 border-t border-slate-50"><h4 class="text-xs font-bold text-red-500 mb-1">اعتذارات (${t.apologized.length}):</h4><div class="flex flex-wrap">${t.apologized.map(j => `<span class="inline-block bg-red-50 text-red-700 text-[11px] font-bold px-2 py-1 rounded border border-red-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
+                card.appendChild(body);
+
+                // الزر الاحترافي للتوزيع
+                if(t.confirmed.length > 0) {
+                    const actionsDiv = createEl('div', 'flex justify-end mt-4 pt-3 border-t border-slate-100');
+                    const distBtn = createEl('button', 'bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-black transition-colors shadow-md', '<span class="material-symbols-outlined text-[18px]">format_list_numbered_rtl</span> توزيع الملاعب والطباعة');
+                    distBtn.onclick = () => startCourtDistribution(t.tournament);
+                    actionsDiv.appendChild(distBtn); card.appendChild(actionsDiv);
                 }
-            } catch(e) { Swal.fire('خطأ', 'فشل تحميل البيانات', 'error'); }
+                area.appendChild(card);
+            });
         }
 
-        function renderCourtDistribution() {
-            const area = document.getElementById('courtDistributionArea');
-            area.innerHTML = '';
-            
-            const courtSelector = document.createElement('div');
-            courtSelector.className = 'bg-white p-4 rounded-xl border shadow-sm mb-4';
-            courtSelector.innerHTML = `<label class="block text-sm font-bold text-slate-700 mb-2">عدد الملاعب</label><select id="courtsCountSelect" onchange="updateCourtsCount()" class="w-full h-12 border rounded-lg px-4 font-bold text-center bg-slate-50">${[1, 2, 3, 4, 5, 6, 7, 8].map(n => `<option value="${n}" ${n === currentDistCourtsCount ? 'selected' : ''}>${n} ملعب</option>`).join('')}</select>`;
-            area.appendChild(courtSelector);
-            
-            if (currentDistCourtsCount === 1) {
-                const html = `<div class="bg-white rounded-xl border shadow-sm p-4"><h3 class="font-bold text-slate-800 mb-3 border-b pb-2">كشف الحكام (${currentDistribution.length})</h3><div class="space-y-2">${currentDistribution.map((j, i) => `<div class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg"><span class="text-xs font-bold text-slate-500 w-8">${i + 1}</span><img class="w-10 h-10 rounded-full object-cover border" src="${j.photo || `https://ui-avatars.com/api/?name=${j.name}&background=fff&color=137fec`}"><div class="flex-1"><h4 class="text-sm font-bold text-slate-900">${j.name}</h4><p class="text-[10px] text-primary font-bold">${j.cat}</p></div></div>`).join('')}</div></div>`;
-                area.innerHTML += html;
-            } else {
-                for(let c = 1; c <= currentDistCourtsCount; c++) {
-                    const courtJudges = currentDistribution.filter(j => j.court === c);
-                    const courtOptions = Array.from({length: currentDistCourtsCount}, (_, i) => `<option value="${i + 1}" ${(i + 1) === c ? 'selected' : ''}>ملعب ${i + 1}</option>`).join('');
-                    const html = `<div class="bg-white rounded-xl border shadow-sm p-4 mb-4"><div class="flex justify-between items-center mb-3 border-b pb-2"><h3 class="font-bold text-slate-800">الملعب رقم ${c}</h3><span class="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">${courtJudges.length} حكم</span></div><div class="space-y-2">${courtJudges.map((j, idx) => {
-                        const globalIndex = currentDistribution.findIndex(judge => judge.name === j.name && judge.cat === j.cat);
-                        return `<div class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg"><span class="text-xs font-bold text-slate-500 w-8">${idx + 1}</span><img class="w-10 h-10 rounded-full object-cover border" src="${j.photo || `https://ui-avatars.com/api/?name=${j.name}&background=fff&color=137fec`}"><div class="flex-1"><h4 class="text-sm font-bold text-slate-900">${j.name}</h4><p class="text-[10px] text-primary font-bold">${j.cat}</p></div><select onchange="changeDistributionCourt(${globalIndex}, this.value)" class="text-xs border rounded px-2 py-1 bg-white">${courtOptions}</select></div>`;
-                    }).join('')}</div></div>`;
-                    area.innerHTML += html;
-                }
+        // --- Court Distribution Logic ---
+        async function startCourtDistribution(tName) {
+            const tourney = tournamentsHistory.find(t => t.tournament === tName);
+            const { value: courtsCountStr } = await Swal.fire({
+                title: 'إعداد الملاعب', text: `يوجد ${tourney.confirmed.length} حكام معتمدين للبطولة. أدخل عدد الملاعب لتوزيعهم آلياً:`,
+                input: 'number', inputValue: 1, inputAttributes: { min: 1, step: 1 },
+                showCancelButton: true, confirmButtonText: 'توزيع الحكام', cancelButtonText: 'إلغاء'
+            });
+
+            if(courtsCountStr) {
+                currentDistCourtsCount = parseInt(courtsCountStr);
+                currentDistTournament = tName;
+                currentDistribution = JSON.parse(JSON.stringify(tourney.confirmed)); 
+                currentDistribution.forEach((j, i) => { j.court = (i % currentDistCourtsCount) + 1; }); // Round Robin
+                
+                document.getElementById('distTournamentName').innerText = tName;
+                renderCourtDistribution();
+                document.getElementById('courtDistributionModal').classList.remove('hidden');
             }
         }
 
-        function updateCourtsCount() { currentDistCourtsCount = parseInt(document.getElementById('courtsCountSelect').value); renderCourtDistribution(); }
-        function changeDistributionCourt(index, newCourt) { currentDistribution[index].court = parseInt(newCourt); renderCourtDistribution(); }
+        function renderCourtDistribution() {
+            const area = document.getElementById('courtDistributionArea'); area.innerHTML = '';
+            for(let c = 1; c <= currentDistCourtsCount; c++) {
+                let courtJudges = currentDistribution.map((j, idx) => ({j, idx})).filter(item => item.j.court === c);
+                let courtOptions = Array.from({length: currentDistCourtsCount}, (_, k) => `<option value="${k+1}" ${k+1 === c ? 'selected' : ''}>الملعب ${k+1}</option>`).join('');
+                
+                let html = `
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6">
+                    <h4 class="font-bold text-lg text-slate-800 border-b border-slate-100 pb-3 mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">flag</span> الملعب رقم (${c}) <span class="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded mr-auto">${courtJudges.length} حكام</span></h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        ${courtJudges.map(item => `
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="mb-3">
+                                    <h5 class="text-sm font-bold text-slate-800">${item.j.name}</h5>
+                                    <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded mt-1 inline-block">${item.j.cat}</span>
+                                </div>
+                                <div class="mt-2 border-t border-slate-200 pt-2">
+                                    <label class="block text-[10px] text-slate-500 font-bold mb-1">نقل الحكم إلى:</label>
+                                    <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="w-full text-xs border border-slate-300 rounded bg-white pr-2 pl-8 py-1.5 outline-none focus:border-primary font-bold text-slate-700 appearance-none" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E'); background-position: left 0.5rem center; background-repeat: no-repeat; background-size: 1.25rem;">
+                                        ${courtOptions}
+                                    </select>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+                area.innerHTML += html;
+            }
+        }
+
+        function changeDistributionCourt(index, newCourt) {
+            currentDistribution[index].court = parseInt(newCourt);
+            renderCourtDistribution();
+        }
+
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
         function printCourtDistribution() {
@@ -634,17 +629,6 @@
             if(res.status === 'success') { allJudgesData = res.data; document.getElementById('allJudgesTableBody').innerHTML = res.data.map(j => `<tr class="border-b"><td class="p-3 font-bold">${j.Name}</td><td class="p-3 text-center text-xs">${j.Category}</td><td class="p-3 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary bg-primary/10 p-1.5 rounded-lg"><span class="material-symbols-outlined text-sm align-middle">visibility</span></button></td></tr>`).join(''); }
         }
 
-        function filterJudges() {
-            const name = document.getElementById('searchJudgeName').value.trim().toLowerCase();
-            const cat = document.getElementById('filterCategory').value;
-            const filtered = allJudgesData.filter(j => {
-                const nameMatch = j.Name.toLowerCase().includes(name);
-                const catMatch = cat === 'all' || j.Category === cat;
-                return nameMatch && catMatch;
-            });
-            document.getElementById('allJudgesTableBody').innerHTML = filtered.map(j => `<tr class="border-b"><td class="p-3 font-bold">${j.Name}</td><td class="p-3 text-center text-xs">${j.Category}</td><td class="p-3 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary bg-primary/10 p-1.5 rounded-lg"><span class="material-symbols-outlined text-sm align-middle">visibility</span></button></td></tr>`).join('');
-        }
-
         async function openReport(id) {
             Swal.showLoading();
             try {
@@ -665,14 +649,10 @@
                 }
             } catch(e) {}
         }
-        
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
         
         function printReport() { 
             const modal = document.getElementById('reportModal');
-            const modalContent = document.getElementById('reportModalContent');
-            
-            // Add print-target class to the content wrapper
             modal.classList.remove('no-print');
             modal.classList.add('print-target');
             
