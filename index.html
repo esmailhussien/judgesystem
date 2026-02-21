@@ -481,27 +481,61 @@
 
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
-        function runPrint(targetId) {
-            const el = document.getElementById(targetId);
-            if (!el) return;
-            const hadHidden = el.classList.contains('hidden');
-            const hadNoPrint = el.classList.contains('no-print');
+        function printViaIframe(targetId, titleText = '') {
+            const source = document.getElementById(targetId);
+            if (!source) return;
 
-            el.classList.remove('hidden', 'no-print');
-            el.classList.add('print-target');
+            const node = source.cloneNode(true);
+            node.classList.remove('hidden', 'no-print');
+            node.querySelectorAll('.no-print').forEach(el => el.remove());
 
-            const cleanup = () => {
-                el.classList.remove('print-target');
-                if (hadHidden) el.classList.add('hidden'); else el.classList.remove('hidden');
-                if (hadNoPrint) el.classList.add('no-print'); else el.classList.remove('no-print');
-                window.removeEventListener('afterprint', cleanup);
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(`<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${titleText}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { primary: '#137fec' } } } };
+  </script>
+  <style>
+    @page { size: A4; margin: 10mm; }
+    html, body { height: auto; background: white; }
+    body { font-family: 'Tajawal', sans-serif; color: #0f172a; }
+    table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
+    table.print-table th, table.print-table td { border: 1px solid #000; padding: 10px; text-align: center; font-size: 13px; }
+    table.print-table th { background-color: #e5e7eb; -webkit-print-color-adjust: exact; }
+    .court-header { background-color: #cbd5e1; font-weight: bold; font-size: 15px; }
+  </style>
+</head>
+<body></body>
+</html>`);
+            doc.close();
+
+            const body = doc.body;
+            body.appendChild(node);
+
+            const doPrint = () => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                setTimeout(() => iframe.remove(), 300);
             };
 
-            window.addEventListener('afterprint', cleanup);
-            // Give mobile browsers time to apply print styles before printing
-            setTimeout(() => window.print(), 120);
-            // Fallback for browsers that do not fire afterprint (common on mobile)
-            setTimeout(cleanup, 1200);
+            iframe.onload = () => setTimeout(doPrint, 500);
+            setTimeout(doPrint, 900);
         }
 
         function printCourtDistribution() {
@@ -519,7 +553,7 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            runPrint('printMainListArea');
+            printViaIframe('printMainListArea', 'كشف التوزيع');
         }
 
         // --- Referee Functions ---
@@ -579,7 +613,7 @@
             } catch(e) {}
         }
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        function printReport() { runPrint('reportModal'); }
+        function printReport() { printViaIframe('reportModalContent', 'السيرة الذاتية'); }
     </script>
 </body>
 </html>
