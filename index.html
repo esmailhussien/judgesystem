@@ -31,54 +31,29 @@
         .stitch-input:focus { border-color: #137fec; box-shadow: 0 0 0 2px rgba(19, 127, 236, 0.2); }
         .app-view { display: none; } 
         
+        /* تأثيرات القائمة العلوية والسفلية */
         .nav-btn.active { color: #2563eb; font-weight: bold; border-bottom: 3px solid #2563eb; }
         .nav-item.active { color: #137fec !important; }
         .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
-        /* ================= محرك الطباعة المضاد للورقة البيضاء ================= */
         @media print {
-            @page { size: auto; margin: 10mm; }
+            @page { size: A4; margin: 10mm; }
+            html, body { height: auto !important; overflow: visible !important; background: white !important; }
             
-            html, body { 
-                background: white !important; 
-                height: auto !important; 
-                min-height: auto !important; 
-                overflow: visible !important; 
-                position: static !important; 
-            }
-            
-            /* إخفاء أي شيء غير مستهدف للطباعة لمنع التشويش */
-            body > * { display: none !important; }
-            
-            /* إظهار العنصر المستهدف وجعله صفحة عادية */
-            body > .print-target { 
-                display: block !important; 
-                position: relative !important; 
-                width: 100% !important; 
-                height: auto !important;
-                visibility: visible !important; 
-                opacity: 1 !important;
-                transform: none !important;
-            }
-            
-            /* تفعيل الألوان في الـ PDF */
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body > *:not(.print-target) { display: none !important; }
             
             .no-print { display: none !important; }
+            .print-target { display: block !important; position: static !important; width: 100% !important; height: auto !important; visibility: visible !important; background: white !important; overflow: visible !important; }
             .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
-            /* ترويض النافذة المنبثقة (CV Modal) لتعمل كصفحة ورق طبيعية */
-            #reportModal.print-target { background: none !important; backdrop-filter: none !important; }
-            #reportModalContent { 
-                box-shadow: none !important; margin: 0 !important; max-width: 100% !important; 
-                width: 100% !important; border: none !important; background: white !important; 
-            }
+            #reportModal.print-target { position: static !important; padding: 0 !important; }
+            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; overflow: visible !important; transform: none !important; }
+            .print-target .min-h-screen { min-height: 0 !important; }
             
-            /* جداول الكشف */
-            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; color: black; }
-            table.print-table th { background-color: #f1f5f9 !important; color: black; }
-            .court-header { background-color: #cbd5e1 !important; font-weight: bold; color: black; }
+            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
+            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; }
+            table.print-table th { background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; }
+            .court-header { background-color: #cbd5e1 !important; font-weight: bold; font-size: 16px; }
         }
     </style>
 </head>
@@ -119,10 +94,10 @@
                     </h1>
                 </div>
                 <div class="flex space-x-2 space-x-reverse h-full items-center">
-                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard" class="nav-btn active h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">الإحصائيات</button>
-                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">الترشيح</button>
-                    <button onclick="showAdminScreen('records')" id="btn-admin-records" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">السجلات والملاعب</button>
-                    <button onclick="showAdminScreen('database')" id="btn-admin-database" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600 whitespace-nowrap">قاعدة الحكام</button>
+                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard" class="nav-btn active h-full px-3 py-2 text-slate-600 hover:text-blue-600">الإحصائيات</button>
+                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">الترشيح</button>
+                    <button onclick="showAdminScreen('records')" id="btn-admin-records" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">السجلات والملاعب</button>
+                    <button onclick="showAdminScreen('database')" id="btn-admin-database" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">قاعدة الحكام</button>
                     <button onclick="logout()" class="h-full px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg mr-2"><span class="material-symbols-outlined text-xl align-middle">logout</span></button>
                 </div>
             </div>
@@ -178,13 +153,14 @@
                     <button onclick="loadRecords()" class="text-primary hover:bg-blue-50 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
                 </div>
                 <input type="text" id="searchTournamentHistory" onkeyup="filterRecords()" placeholder="ابحث باسم البطولة..." class="stitch-input mb-4">
+                
                 <div id="recordsArea" class="space-y-4 pb-10"></div>
             </section>
 
             <section id="admin-screen-database" class="admin-section hidden space-y-6 fade-in">
                 <div class="flex gap-3 mb-4">
                     <input type="text" id="searchJudgeName" onkeyup="filterJudges()" placeholder="بحث بالاسم..." class="stitch-input flex-1">
-                    <select id="filterCategory" onchange="filterJudges()" class="stitch-input w-32 appearance-none bg-slate-50"><option value="all">الكل</option><option value="دولي">دولي</option><option value="قاري">قاري</option><option value="اولى">أولى</option><option value="ثانية">ثانية</option><option value="ثالثة">ثالثة</option></select>
+                    <select id="filterCategory" onchange="filterJudges()" class="stitch-input w-32 appearance-none bg-slate-50 pl-8" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E'); background-position: left 0.5rem center; background-repeat: no-repeat; background-size: 1.25rem;"><option value="all">الكل</option><option value="دولي">دولي</option><option value="قاري">قاري</option><option value="اولى">أولى</option><option value="ثانية">ثانية</option><option value="ثالثة">ثالثة</option></select>
                 </div>
                 <div class="bg-white border rounded-2xl shadow-sm overflow-x-auto pb-10">
                     <table class="w-full text-right text-sm min-w-[400px]">
@@ -233,7 +209,9 @@
                 <h2 class="font-bold text-lg text-slate-800">صندوق الدعوات</h2>
                 <button onclick="loadMyInvitations()" class="text-primary text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
             </div>
+            
             <div id="invitationsArea" class="space-y-4 min-h-[50vh]"></div>
+            
             <button onclick="openReport(currentLoggedInJudge.JudgeID)" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold shadow-md flex items-center justify-center gap-2 transition-colors">
                 <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي
             </button>
@@ -248,14 +226,15 @@
                     <h1 class="text-lg font-bold text-slate-800">توزيع الملاعب - <span id="distTournamentName" class="text-primary"></span></h1>
                     <button onclick="printCourtDistribution()" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-black transition-colors shadow-sm"><span class="material-symbols-outlined text-sm">print</span> طباعة الكشف</button>
                 </nav>
-                <div class="p-4 md:p-6 overflow-y-auto bg-slate-50" id="courtDistributionArea"></div>
+                <div class="p-4 md:p-6 overflow-y-auto bg-slate-50" id="courtDistributionArea">
+                    </div>
             </div>
         </div>
     </div>
 
     <div id="reportModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="min-h-screen px-4 text-center flex items-center justify-center py-10">
-            <div class="inline-block w-full max-w-md text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
+        <div class="min-h-screen px-4 text-center">
+            <div class="inline-block w-full max-w-md my-8 text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
                 <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-4 h-14 flex items-center justify-between">
                     <button onclick="closeReport()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full no-print"><span class="material-symbols-outlined">close</span></button>
                     <h1 class="text-sm font-bold text-slate-800">السيرة الذاتية (CV)</h1>
@@ -268,7 +247,20 @@
                 </section>
                 <div class="p-4 space-y-4 text-sm">
                     <section class="bg-white rounded-xl p-4 border shadow-sm print-break-inside-avoid"><h3 class="font-bold text-slate-800 mb-2 border-b pb-2 text-xs text-primary">البيانات الأساسية</h3><div class="flex justify-between py-1"><span class="text-slate-500">رقم قومي</span><span id="r-nationalId" class="font-bold">-</span></div><div class="flex justify-between py-1"><span class="text-slate-500">موبايل</span><span id="r-phone" class="font-bold" dir="ltr">-</span></div><div class="flex justify-between py-1"><span class="text-slate-500">الحزام</span><span id="r-belt" class="font-bold">-</span></div></section>
-                    <section class="bg-white rounded-xl p-4 border shadow-sm print-break-inside-avoid"><div class="flex justify-between mb-2 border-b pb-2"><h3 class="font-bold text-slate-800 text-xs text-primary">سجل البطولات</h3><span class="text-[10px] font-bold text-slate-500">تعيينات: <span id="r-assignCount">0</span></span></div><ul id="r-historyList" class="divide-y max-h-40 overflow-y-auto"></ul></section>
+                    <section class="bg-white rounded-xl p-4 border shadow-sm print-break-inside-avoid">
+                        <h3 class="font-bold text-slate-800 mb-3 border-b pb-2 text-xs text-primary">إحصائيات التعيين</h3>
+                        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-100"><p class="text-[10px] text-slate-500 font-bold">إجمالي</p><p class="text-base font-bold text-slate-800" id="r-totalCount">0</p></div>
+                            <div class="bg-green-50 p-2 rounded-lg border border-green-100"><p class="text-[10px] text-green-600 font-bold">مؤكد</p><p class="text-base font-bold text-green-700" id="r-confirmedCount">0</p></div>
+                            <div class="bg-red-50 p-2 rounded-lg border border-red-100"><p class="text-[10px] text-red-600 font-bold">اعتذار</p><p class="text-base font-bold text-red-700" id="r-apologyCount">0</p></div>
+                        </div>
+                        <div class="bg-slate-800 text-white p-2 rounded-lg mb-4 flex justify-between items-center px-3">
+                            <span class="text-xs font-bold">نسبة الحضور</span>
+                            <span class="text-sm font-bold text-yellow-400" id="r-attendancePct">0%</span>
+                        </div>
+                        <div class="flex justify-between mb-2 border-b pb-2"><h3 class="font-bold text-slate-800 text-xs text-primary">سجل البطولات</h3></div>
+                        <ul id="r-historyList" class="divide-y max-h-40 overflow-y-auto"></ul>
+                    </section>
                 </div>
             </div>
         </div>
@@ -289,62 +281,17 @@
         const API_URL = 'https://judge.olivesom3a.workers.dev/?token=MySuperSecretKey2024'; 
         let allJudgesData = [], currentSuggestions = [], isSaving = false, tournamentsHistory = [];
         let currentRole = null, currentLoggedInJudge = null;
-        let currentDistribution = [], currentDistCourtsCount = 1, currentDistTournament = '';
+        
+        // Court Distribution State
+        let currentDistribution = [];
+        let currentDistCourtsCount = 1;
+        let currentDistTournament = '';
 
         function createEl(tag, className, innerHTML = '') { const el = document.createElement(tag); if(className) el.className = className; if(innerHTML) el.innerHTML = innerHTML; return el; }
 
         function initApp() { document.getElementById('login-view').style.display = 'flex'; }
 
-        // --- محرك الطباعة الجذري ضد الورقة البيضاء ---
-        let isPrinting = false;
-        let currentPrintTargetId = null;
-        let currentPrintWasHidden = false;
-
-        function executePrint(elementId, wasHidden) {
-            if(isPrinting) return;
-            isPrinting = true;
-            currentPrintTargetId = elementId;
-            currentPrintWasHidden = wasHidden;
-            
-            const el = document.getElementById(elementId);
-            el.classList.add('print-target');
-            if(wasHidden) el.classList.remove('hidden', 'no-print');
-            
-            // إخفاء الشاشات الرئيسية لمنع تداخل أبعاد الشاشة
-            document.querySelectorAll('.app-view').forEach(v => v.style.display = 'none');
-            document.getElementById('login-view').style.display = 'none';
-            
-            // تأخير 600 جزء من الثانية ليتمكن المتصفح من رسم النافذة بشكل مثالي
-            setTimeout(() => {
-                window.print();
-            }, 600);
-        }
-
-        function cleanupPrintState() {
-            if(!isPrinting) return;
-            isPrinting = false;
-            
-            if(currentPrintTargetId) {
-                const el = document.getElementById(currentPrintTargetId);
-                if(el) {
-                    el.classList.remove('print-target');
-                    if(currentPrintWasHidden) el.classList.add('hidden', 'no-print');
-                }
-            }
-            
-            currentPrintTargetId = null;
-            
-            // إعادة الشاشات لحالتها
-            if(currentRole === 'admin') document.getElementById('admin-view').style.display = 'block';
-            else if(currentRole === 'referee') document.getElementById('referee-view').style.display = 'block';
-            else document.getElementById('login-view').style.display = 'flex';
-        }
-
-        // الاستماع لإغلاق نافذة الطباعة للتنظيف التلقائي
-        window.addEventListener('afterprint', cleanupPrintState);
-        window.addEventListener('focus', () => { if(isPrinting) setTimeout(cleanupPrintState, 1500); });
-        // ------------------------------------------
-
+        // --- Auth ---
         async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('loginUser').value.trim(); const pass = document.getElementById('loginPass').value.trim();
@@ -364,26 +311,32 @@
                         document.getElementById('referee-view').style.display = 'block';
                         document.getElementById('refUserName').innerText = currentLoggedInJudge.Name;
                         document.getElementById('refUserCat').innerText = `حكم ${currentLoggedInJudge.Category}`;
-                        document.getElementById('refUserPhoto').src = currentLoggedInJudge.Photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentLoggedInJudge.Name)}&background=fff&color=137fec`;
+                        document.getElementById('refUserPhoto').src = currentLoggedInJudge.Photo || `https://ui-avatars.com/api/?name=${currentLoggedInJudge.Name}&background=fff&color=137fec`;
                         loadMyInvitations(); 
                     }
                 } else { Swal.fire('خطأ', res.message, 'error'); }
             } catch(error) { Swal.fire('فشل الاتصال', error.message, 'error'); } 
             finally { btn.innerHTML = 'دخول للمنصة'; btn.disabled = false; }
         }
-        
         function logout() { location.reload(); }
 
+        // --- Admin Navigation ---
         function showAdminScreen(id) {
             document.querySelectorAll('.admin-section').forEach(d => d.classList.add('hidden'));
+            
+            // تحديث قوائم الديسكتوب
             document.querySelectorAll('#admin-view header .nav-btn').forEach(btn => { btn.classList.remove('active', 'text-blue-600'); btn.classList.add('text-slate-600'); });
             const activeTopBtn = document.getElementById(`btn-admin-${id}`); if(activeTopBtn) { activeTopBtn.classList.add('active', 'text-blue-600'); activeTopBtn.classList.remove('text-slate-600'); }
+            
+            // تحديث قائمة الموبايل السفلية
             document.querySelectorAll('#admin-view .nav-item').forEach(btn => { btn.classList.remove('active', 'text-primary'); btn.classList.add('text-slate-400'); });
             const activeBotBtn = document.getElementById(`nav-admin-${id}`); if(activeBotBtn) { activeBotBtn.classList.add('active', 'text-primary'); activeBotBtn.classList.remove('text-slate-400'); }
+            
             document.getElementById(`admin-screen-${id}`).classList.remove('hidden');
             if(id === 'dashboard') loadDashboard(); if(id === 'database') loadAllJudges(); if(id === 'records') loadRecords(); 
         }
 
+        // --- Admin Functions ---
         async function loadDashboard() {
             try {
                 const res = await fetch(`${API_URL}&action=getDashboardStats`).then(r=>r.json());
@@ -403,7 +356,8 @@
 
             Swal.fire({title: 'جاري التوليد...', didOpen: () => Swal.showLoading()});
             try {
-                const res = await fetch(`${API_URL}&action=getSmartSuggestions&c_dwali=${c_dwali}&c_kari=${c_kari}&c_oula=${c_oula}&c_thania=${c_thania}&c_thalitha=${c_thalitha}`).then(r=>r.json());
+                const url = `${API_URL}&action=getSmartSuggestions&c_dwali=${c_dwali}&c_kari=${c_kari}&c_oula=${c_oula}&c_thania=${c_thania}&c_thalitha=${c_thalitha}`;
+                const res = await fetch(url).then(r=>r.json());
                 if (res.status === 'success') {
                     currentSuggestions = res.data;
                     document.getElementById('draftCount').innerText = currentSuggestions.length;
@@ -426,6 +380,7 @@
             } catch(e) {} finally { isSaving = false; }
         }
 
+        // --- Records & Interactive Court Distribution ---
         async function loadRecords() {
             document.getElementById('recordsArea').innerHTML = '<div class="text-center p-6"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
             try {
@@ -456,6 +411,7 @@
                 if (t.apologized.length > 0) body.innerHTML += `<div class="pt-2 border-t border-slate-50"><h4 class="text-xs font-bold text-red-500 mb-1">اعتذارات (${t.apologized.length}):</h4><div class="flex flex-wrap">${t.apologized.map(j => `<span class="inline-block bg-red-50 text-red-700 text-[11px] font-bold px-2 py-1 rounded border border-red-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
                 card.appendChild(body);
 
+                // الزر الاحترافي للتوزيع
                 if(t.confirmed.length > 0) {
                     const actionsDiv = createEl('div', 'flex justify-end mt-4 pt-3 border-t border-slate-100');
                     const distBtn = createEl('button', 'bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-black transition-colors shadow-md', '<span class="material-symbols-outlined text-[18px]">format_list_numbered_rtl</span> توزيع الملاعب والطباعة');
@@ -466,6 +422,7 @@
             });
         }
 
+        // --- Court Distribution Logic ---
         async function startCourtDistribution(tName) {
             const tourney = tournamentsHistory.find(t => t.tournament === tName);
             const { value: courtsCountStr } = await Swal.fire({
@@ -478,7 +435,8 @@
                 currentDistCourtsCount = parseInt(courtsCountStr);
                 currentDistTournament = tName;
                 currentDistribution = JSON.parse(JSON.stringify(tourney.confirmed)); 
-                currentDistribution.forEach((j, i) => { j.court = (i % currentDistCourtsCount) + 1; });
+                currentDistribution.forEach((j, i) => { j.court = (i % currentDistCourtsCount) + 1; }); // Round Robin
+                
                 document.getElementById('distTournamentName').innerText = tName;
                 renderCourtDistribution();
                 document.getElementById('courtDistributionModal').classList.remove('hidden');
@@ -501,9 +459,9 @@
                                     <h5 class="text-sm font-bold text-slate-800">${item.j.name}</h5>
                                     <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded mt-1 inline-block">${item.j.cat}</span>
                                 </div>
-                                <div class="flex items-center justify-between border-t border-slate-200 pt-2">
-                                    <label class="text-[10px] text-slate-500 font-bold">نقل الحكم إلى:</label>
-                                    <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="text-xs border border-slate-300 rounded bg-white px-2 py-1 outline-none focus:border-primary font-bold text-slate-700">
+                                <div class="mt-2 border-t border-slate-200 pt-2">
+                                    <label class="block text-[10px] text-slate-500 font-bold mb-1">نقل الحكم إلى:</label>
+                                    <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="w-full text-xs border border-slate-300 rounded bg-white pr-2 pl-8 py-1.5 outline-none focus:border-primary font-bold text-slate-700 appearance-none" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E'); background-position: left 0.5rem center; background-repeat: no-repeat; background-size: 1.25rem;">
                                         ${courtOptions}
                                     </select>
                                 </div>
@@ -515,10 +473,13 @@
             }
         }
 
-        function changeDistributionCourt(index, newCourt) { currentDistribution[index].court = parseInt(newCourt); renderCourtDistribution(); }
+        function changeDistributionCourt(index, newCourt) {
+            currentDistribution[index].court = parseInt(newCourt);
+            renderCourtDistribution();
+        }
+
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
-        // --- الطباعة الآمنة ---
         function printCourtDistribution() {
             document.getElementById('printTournamentName').innerText = currentDistTournament;
             let tbody = '';
@@ -534,11 +495,13 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            executePrint('printMainListArea', true);
-        }
-
-        function printReport() {
-            executePrint('reportModal', false);
+            
+            const printArea = document.getElementById('printMainListArea');
+            printArea.classList.remove('hidden', 'no-print'); 
+            printArea.classList.add('print-target');
+            window.print();
+            printArea.classList.add('hidden', 'no-print'); 
+            printArea.classList.remove('print-target');
         }
 
         // --- Referee Functions ---
@@ -583,16 +546,22 @@
                 const res = await fetch(`${API_URL}&action=getJudgeProfile&id=${id}`).then(r=>r.json());
                 if(res.status === 'success') {
                     const info = res.data.info||{}; const history = res.data.history||[];
-                    document.getElementById('r-photo').src = info.Photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(info.Name)}&background=fff&color=137fec`;
+                    document.getElementById('r-photo').src = info.Photo || `https://ui-avatars.com/api/?name=${info.Name}&background=fff&color=137fec`;
                     document.getElementById('r-name').innerText = info.Name; document.getElementById('r-category').innerText = info.Category;
-                    document.getElementById('r-nationalId').innerText = info.NationalID; document.getElementById('r-phone').innerText = info.Phone;
-                    document.getElementById('r-belt').innerText = info.Belt; document.getElementById('r-assignCount').innerText = info.AssignCount || 0;
+                    document.getElementById('r-nationalId').innerText = info.NationalID; document.getElementById('r-phone').innerText = info.Phone; document.getElementById('r-belt').innerText = info.Belt;
+                    
+                    const confirmed = parseInt(info.AssignCount || 0); const apologized = parseInt(info.ApologyCount || 0); const total = confirmed + apologized;
+                    const pct = total > 0 ? Math.round((confirmed / total) * 100) : 0;
+                    document.getElementById('r-totalCount').innerText = total; document.getElementById('r-confirmedCount').innerText = confirmed;
+                    document.getElementById('r-apologyCount').innerText = apologized; document.getElementById('r-attendancePct').innerText = pct + '%';
+                    
                     document.getElementById('r-historyList').innerHTML = history.length ? history.map(h => `<li class="flex justify-between py-2 border-b last:border-0"><span class="font-bold">${h.tournament}</span><span class="text-slate-400 text-[10px]">${h.date}</span></li>`).join('') : '<li class="text-center text-slate-400 py-2">لا توجد مشاركات</li>';
                     document.getElementById('reportModal').classList.remove('hidden'); Swal.close();
                 }
             } catch(e) {}
         }
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
+        function printReport() { const modal = document.getElementById('reportModal'); modal.classList.remove('no-print'); modal.classList.add('print-target'); window.print(); modal.classList.add('no-print'); modal.classList.remove('print-target'); }
     </script>
 </body>
 </html>
