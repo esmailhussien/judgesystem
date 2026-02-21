@@ -37,67 +37,23 @@
         .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
         @media print {
-            @page { 
-                size: A4; 
-                margin: 15mm; 
-            }
+            @page { size: A4; margin: 10mm; }
+            html, body { height: auto !important; overflow: visible !important; background: white !important; }
             
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
+            body > *:not(.print-target) { display: none !important; }
             
-            html, body { 
-                background: white !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
+            .no-print { display: none !important; }
+            .print-target { display: block !important; position: static !important; width: 100% !important; height: auto !important; visibility: visible !important; background: white !important; overflow: visible !important; }
+            .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
-            /* Robust printing: Hide everything, then show/position target */
-            body * {
-                visibility: hidden;
-            }
+            #reportModal.print-target { position: static !important; padding: 0 !important; }
+            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; overflow: visible !important; transform: none !important; }
+            .print-target .min-h-screen { min-height: 0 !important; }
             
-            .print-content, .print-content * {
-                visibility: visible;
-            }
-            
-            .print-content {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100% !important;
-            }
-            
-            .no-print { 
-                display: none !important; 
-            }
-            
-            /* Table styles */
-            table.print-table { 
-                width: 100%; 
-                border-collapse: collapse; 
-                margin-top: 15px; 
-            }
-            
-            table.print-table th, 
-            table.print-table td { 
-                border: 1px solid #000; 
-                padding: 12px; 
-                text-align: center; 
-                font-size: 14px; 
-            }
-            
-            table.print-table th { 
-                background-color: #e5e7eb !important; 
-                font-weight: bold;
-            }
-            
-            .court-header { 
-                background-color: #cbd5e1 !important; 
-                font-weight: bold; 
-                font-size: 16px; 
-            }
+            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
+            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; }
+            table.print-table th { background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; }
+            .court-header { background-color: #cbd5e1 !important; font-weight: bold; font-size: 16px; }
         }
     </style>
 </head>
@@ -134,7 +90,8 @@
             <div class="flex items-center px-4 h-16 justify-between">
                 <div class="flex items-center gap-4">
                     <h1 class="text-xl font-bold tracking-tight text-slate-800 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">shield_person</span> الإدارة المركزية
+                        <span class="material-symbols-outlined text-primary">shield_person</span> نظام الحكام
+Pro
                     </h1>
                 </div>
                 <div class="flex space-x-2 space-x-reverse h-full items-center">
@@ -320,9 +277,8 @@
         </div>
     </div>
 
-    <!-- Print Area for Court Distribution -->
-    <div id="printMainListArea" style="display:none;">
-        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
+    <div id="printMainListArea" class="hidden no-print">
+        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;" class="print-break-inside-avoid">
             <h1 style="font-size:22px; font-weight:bold; margin-bottom:5px;">لجنة الحكام الرئيسية</h1>
             <h2 style="font-size:16px;">كشف تعيين الحكام لبطولة: <span id="printTournamentName" style="color: #2563eb;"></span></h2>
         </div>
@@ -330,48 +286,6 @@
             <thead><tr><th style="width:10%;">م</th><th style="width:60%;">اسم الحكم</th><th style="width:30%;">الفئة</th></tr></thead>
             <tbody id="printTableBody"></tbody>
         </table>
-    </div>
-
-    <!-- Print Area for CV -->
-    <div id="printCVArea" style="display:none; font-family: 'Tajawal', sans-serif;">
-        <div style="text-align:center; padding-bottom:20px; margin-bottom:20px; border-bottom: 3px solid #137fec;">
-            <img id="print-photo" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin:0 auto 15px; border: 4px solid #e2e8f0;">
-            <h1 id="print-name" style="font-size:24px; font-weight:bold; margin-bottom:5px; color:#1e293b;">الاسم</h1>
-            <p id="print-category" style="font-size:14px; font-weight:bold; color:#137fec; background:#eff6ff; display:inline-block; padding:5px 15px; border-radius:20px;">الفئة</p>
-        </div>
-        
-        <div style="margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
-            <h3 style="font-size:16px; font-weight:bold; color:#137fec; margin-bottom:15px; border-bottom:2px solid #137fec; padding-bottom:8px;">البيانات الأساسية</h3>
-            <table style="width:100%; border-collapse:collapse;">
-                <tr><td style="padding:8px 0; color:#64748b; font-weight:500;">رقم قومي:</td><td id="print-nationalId" style="padding:8px 0; font-weight:bold; text-align:left;">-</td></tr>
-                <tr><td style="padding:8px 0; color:#64748b; font-weight:500;">موبايل:</td><td id="print-phone" style="padding:8px 0; font-weight:bold; text-align:left; direction:ltr;">-</td></tr>
-                <tr><td style="padding:8px 0; color:#64748b; font-weight:500;">الحزام:</td><td id="print-belt" style="padding:8px 0; font-weight:bold; text-align:left;">-</td></tr>
-            </table>
-        </div>
-        
-        <div style="margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
-            <h3 style="font-size:16px; font-weight:bold; color:#137fec; margin-bottom:15px; border-bottom:2px solid #137fec; padding-bottom:8px;">إحصائيات التعيين</h3>
-            <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:space-between;">
-                <div style="flex:1; text-align:center; padding:12px; background:white; border-radius:8px; border:1px solid #e2e8f0;">
-                    <p style="font-size:11px; color:#64748b; font-weight:bold; margin-bottom:5px;">إجمالي</p>
-                    <p id="print-totalCount" style="font-size:20px; font-weight:bold; color:#1e293b; margin:0;">0</p>
-                </div>
-                <div style="flex:1; text-align:center; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac;">
-                    <p style="font-size:11px; color:#16a34a; font-weight:bold; margin-bottom:5px;">مؤكد</p>
-                    <p id="print-confirmedCount" style="font-size:20px; font-weight:bold; color:#15803d; margin:0;">0</p>
-                </div>
-                <div style="flex:1; text-align:center; padding:12px; background:#fef2f2; border-radius:8px; border:1px solid #fca5a5;">
-                    <p style="font-size:11px; color:#dc2626; font-weight:bold; margin-bottom:5px;">اعتذار</p>
-                    <p id="print-apologyCount" style="font-size:20px; font-weight:bold; color:#b91c1c; margin:0;">0</p>
-                </div>
-            </div>
-            <div style="background:#1e293b; color:white; padding:12px 15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <span style="font-size:14px; font-weight:bold;">نسبة الحضور</span>
-                <span id="print-attendancePct" style="font-size:16px; font-weight:bold; color:#fbbf24;">0%</span>
-            </div>
-            <h4 style="font-size:14px; font-weight:bold; color:#137fec; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #e2e8f0;">سجل البطولات</h4>
-            <div id="print-historyList" style="font-size:13px;"></div>
-        </div>
     </div>
 
     <script>
@@ -521,7 +435,6 @@
                 area.appendChild(card);
             });
         }
-
         // --- Court Distribution Logic ---
         async function startCourtDistribution(tName) {
             const tourney = tournamentsHistory.find(t => t.tournament === tName);
@@ -595,9 +508,12 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            
-            // Show print area
-            handlePrint('printMainListArea');
+            const printArea = document.getElementById('printMainListArea');
+            printArea.classList.remove('hidden', 'no-print'); 
+            printArea.classList.add('print-target');
+            window.print();
+            printArea.classList.add('hidden', 'no-print'); 
+            printArea.classList.remove('print-target');
         }
 
         // --- Referee Functions ---
@@ -630,7 +546,6 @@
             }
         }
 
-        // --- Shared ---
         async function loadAllJudges() {
             const res = await fetch(`${API_URL}&action=getJudges`).then(r=>r.json());
             if(res.status === 'success') { allJudgesData = res.data; document.getElementById('allJudgesTableBody').innerHTML = res.data.map(j => `<tr class="border-b"><td class="p-3 font-bold">${j.Name}</td><td class="p-3 text-center text-xs">${j.Category}</td><td class="p-3 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary bg-primary/10 p-1.5 rounded-lg"><span class="material-symbols-outlined text-sm align-middle">visibility</span></button></td></tr>`).join(''); }
@@ -657,62 +572,7 @@
             } catch(e) {}
         }
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        
-        function printReport() {
-            // Copy data to print area
-            document.getElementById('print-photo').src = document.getElementById('r-photo').src;
-            document.getElementById('print-name').innerText = document.getElementById('r-name').innerText;
-            document.getElementById('print-category').innerText = document.getElementById('r-category').innerText;
-            document.getElementById('print-nationalId').innerText = document.getElementById('r-nationalId').innerText;
-            document.getElementById('print-phone').innerText = document.getElementById('r-phone').innerText;
-            document.getElementById('print-belt').innerText = document.getElementById('r-belt').innerText;
-            document.getElementById('print-totalCount').innerText = document.getElementById('r-totalCount').innerText;
-            document.getElementById('print-confirmedCount').innerText = document.getElementById('r-confirmedCount').innerText;
-            document.getElementById('print-apologyCount').innerText = document.getElementById('r-apologyCount').innerText;
-            document.getElementById('print-attendancePct').innerText = document.getElementById('r-attendancePct').innerText;
-            
-            // Copy history list
-            const historyHTML = document.getElementById('r-historyList').innerHTML;
-            if(historyHTML.includes('لا توجد مشاركات')) {
-                document.getElementById('print-historyList').innerHTML = '<p style="text-align:center; color:#94a3b8; padding:10px 0;">لا توجد مشاركات</p>';
-            } else {
-                const historyItems = document.getElementById('r-historyList').querySelectorAll('li');
-                let historyContent = '';
-                historyItems.forEach(item => {
-                    const tournament = item.querySelector('span:first-child').innerText;
-                    const date = item.querySelector('span:last-child').innerText;
-                    historyContent += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e2e8f0;"><span style="font-weight:bold;">${tournament}</span><span style="color:#94a3b8; font-size:11px;">${date}</span></div>`;
-                });
-                document.getElementById('print-historyList').innerHTML = historyContent;
-            }
-            
-            // Show print area
-            handlePrint('printCVArea');
-        }
-
-        function handlePrint(areaId) {
-            const printArea = document.getElementById(areaId);
-            
-            // Show content
-            printArea.classList.add('print-content');
-            const originalDisplay = printArea.style.display;
-            printArea.style.display = 'block';
-            
-            // Cleanup function
-            const cleanup = () => {
-                printArea.classList.remove('print-content');
-                printArea.style.display = originalDisplay;
-                window.removeEventListener('afterprint', cleanup);
-            };
-            
-            // Listen for print finish
-            window.addEventListener('afterprint', cleanup);
-            
-            // Wait for rendering
-            setTimeout(() => {
-                window.print();
-            }, 500);
-        }
+        function printReport() { const modal = document.getElementById('reportModal'); modal.classList.remove('no-print'); modal.classList.add('print-target'); window.print(); modal.classList.add('no-print'); modal.classList.remove('print-target'); }
     </script>
 </body>
 </html>
