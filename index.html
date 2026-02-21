@@ -40,12 +40,10 @@
             @page { size: A4; margin: 10mm; }
             html, body { height: auto !important; overflow: visible !important; background: white !important; }
             
-            /* Use visibility instead of display to avoid blank prints on mobile browsers */
-            body > * { visibility: hidden !important; }
+            body > * { display: none !important; }
             
             .no-print { display: none !important; }
             .print-target { display: block !important; position: static !important; width: 100% !important; height: auto !important; visibility: visible !important; background: white !important; overflow: visible !important; }
-            .print-target, .print-target * { visibility: visible !important; }
             .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
             #reportModal.print-target { position: static !important; padding: 0 !important; }
@@ -481,63 +479,6 @@
 
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
-        function printViaIframe(targetId, titleText = '') {
-            const source = document.getElementById(targetId);
-            if (!source) return;
-
-            const node = source.cloneNode(true);
-            node.classList.remove('hidden', 'no-print');
-            node.querySelectorAll('.no-print').forEach(el => el.remove());
-
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = '0';
-            document.body.appendChild(iframe);
-
-            const doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write(`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>${titleText}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script>
-    tailwind.config = { theme: { extend: { colors: { primary: '#137fec' } } } };
-  </script>
-  <style>
-    @page { size: A4; margin: 10mm; }
-    html, body { height: auto; background: white; }
-    body { font-family: 'Tajawal', sans-serif; color: #0f172a; }
-    table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
-    table.print-table th, table.print-table td { border: 1px solid #000; padding: 10px; text-align: center; font-size: 13px; }
-    table.print-table th { background-color: #e5e7eb; -webkit-print-color-adjust: exact; }
-    .court-header { background-color: #cbd5e1; font-weight: bold; font-size: 15px; }
-  </style>
-</head>
-<body></body>
-</html>`);
-            doc.close();
-
-            const body = doc.body;
-            body.appendChild(node);
-
-            const doPrint = () => {
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
-                setTimeout(() => iframe.remove(), 300);
-            };
-
-            iframe.onload = () => setTimeout(doPrint, 500);
-            setTimeout(doPrint, 900);
-        }
-
         function printCourtDistribution() {
             document.getElementById('printTournamentName').innerText = currentDistTournament;
             let tbody = '';
@@ -553,7 +494,10 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            printViaIframe('printMainListArea', 'كشف التوزيع');
+            
+            document.getElementById('printMainListArea').classList.remove('no-print'); document.getElementById('printMainListArea').classList.add('print-target');
+            window.print();
+            document.getElementById('printMainListArea').classList.add('no-print'); document.getElementById('printMainListArea').classList.remove('print-target');
         }
 
         // --- Referee Functions ---
@@ -613,7 +557,7 @@
             } catch(e) {}
         }
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        function printReport() { printViaIframe('reportModalContent', 'السيرة الذاتية'); }
+        function printReport() { const modal = document.getElementById('reportModal'); modal.classList.remove('no-print'); modal.classList.add('print-target'); window.print(); modal.classList.add('no-print'); modal.classList.remove('print-target'); }
     </script>
 </body>
 </html>
