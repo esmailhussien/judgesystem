@@ -40,10 +40,12 @@
             @page { size: A4; margin: 10mm; }
             html, body { height: auto !important; overflow: visible !important; background: white !important; }
             
-            body > * { display: none !important; }
+            /* Use visibility instead of display to avoid blank prints on mobile browsers */
+            body > * { visibility: hidden !important; }
             
             .no-print { display: none !important; }
             .print-target { display: block !important; position: static !important; width: 100% !important; height: auto !important; visibility: visible !important; background: white !important; overflow: visible !important; }
+            .print-target, .print-target * { visibility: visible !important; }
             .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
             #reportModal.print-target { position: static !important; padding: 0 !important; }
