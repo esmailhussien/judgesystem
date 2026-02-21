@@ -479,6 +479,29 @@
 
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
+        function runPrint(targetId) {
+            const el = document.getElementById(targetId);
+            if (!el) return;
+            const hadHidden = el.classList.contains('hidden');
+            const hadNoPrint = el.classList.contains('no-print');
+
+            el.classList.remove('hidden', 'no-print');
+            el.classList.add('print-target');
+
+            const cleanup = () => {
+                el.classList.remove('print-target');
+                if (hadHidden) el.classList.add('hidden'); else el.classList.remove('hidden');
+                if (hadNoPrint) el.classList.add('no-print'); else el.classList.remove('no-print');
+                window.removeEventListener('afterprint', cleanup);
+            };
+
+            window.addEventListener('afterprint', cleanup);
+            // Give mobile browsers time to apply print styles before printing
+            setTimeout(() => window.print(), 120);
+            // Fallback for browsers that do not fire afterprint (common on mobile)
+            setTimeout(cleanup, 1200);
+        }
+
         function printCourtDistribution() {
             document.getElementById('printTournamentName').innerText = currentDistTournament;
             let tbody = '';
@@ -494,10 +517,7 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            
-            document.getElementById('printMainListArea').classList.remove('no-print'); document.getElementById('printMainListArea').classList.add('print-target');
-            window.print();
-            document.getElementById('printMainListArea').classList.add('no-print'); document.getElementById('printMainListArea').classList.remove('print-target');
+            runPrint('printMainListArea');
         }
 
         // --- Referee Functions ---
@@ -557,7 +577,7 @@
             } catch(e) {}
         }
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        function printReport() { const modal = document.getElementById('reportModal'); modal.classList.remove('no-print'); modal.classList.add('print-target'); window.print(); modal.classList.add('no-print'); modal.classList.remove('print-target'); }
+        function printReport() { runPrint('reportModal'); }
     </script>
 </body>
 </html>
