@@ -35,52 +35,50 @@
         .nav-item.active { color: #137fec !important; }
         .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
-        /* ================= إعدادات الطباعة القوية ضد التداخل والصفحات البيضاء ================= */
+        /* ================= محرك الطباعة المضاد للورقة البيضاء ================= */
         @media print {
             @page { size: auto; margin: 10mm; }
+            
             html, body { 
                 background: white !important; 
-                min-height: auto !important; 
                 height: auto !important; 
+                min-height: auto !important; 
                 overflow: visible !important; 
-                color: black !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
+                position: static !important; 
             }
             
-            /* إخفاء كل الموقع افتراضياً في الطباعة */
+            /* إخفاء أي شيء غير مستهدف للطباعة لمنع التشويش */
             body > * { display: none !important; }
-            .no-print { display: none !important; }
             
-            /* إظهار الجزء المستهدف فقط كعنصر أساسي لضمان عمل الطباعة */
+            /* إظهار العنصر المستهدف وجعله صفحة عادية */
             body > .print-target { 
                 display: block !important; 
-                position: static !important; 
+                position: relative !important; 
                 width: 100% !important; 
-                height: auto !important; 
+                height: auto !important;
                 visibility: visible !important; 
-                background: white !important; 
-                overflow: visible !important; 
+                opacity: 1 !important;
                 transform: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
             }
             
+            /* تفعيل الألوان في الـ PDF */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            .no-print { display: none !important; }
             .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
             
-            /* إزالة أي خلفيات معتمة للمودال لتجنب الشاشة البيضاء */
-            #reportModal.print-target { background: none !important; backdrop-filter: none !important; position: static !important; padding: 0 !important; display: block !important; }
-            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; border-radius: 0 !important; overflow: visible !important; transform: none !important; background: white !important; }
+            /* ترويض النافذة المنبثقة (CV Modal) لتعمل كصفحة ورق طبيعية */
+            #reportModal.print-target { background: none !important; backdrop-filter: none !important; }
+            #reportModalContent { 
+                box-shadow: none !important; margin: 0 !important; max-width: 100% !important; 
+                width: 100% !important; border: none !important; background: white !important; 
+            }
             
-            .print-target .min-h-screen { min-height: 0 !important; }
-            
-            /* جداول الطباعة */
-            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; page-break-inside: auto; }
-            table.print-table tr { page-break-inside: avoid; page-break-after: auto; }
-            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; color: #000; }
-            table.print-table th { background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; color: #000; }
-            .court-header { background-color: #cbd5e1 !important; font-weight: bold; font-size: 16px; color: #000; }
+            /* جداول الكشف */
+            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; color: black; }
+            table.print-table th { background-color: #f1f5f9 !important; color: black; }
+            .court-header { background-color: #cbd5e1 !important; font-weight: bold; color: black; }
         }
     </style>
 </head>
@@ -180,7 +178,6 @@
                     <button onclick="loadRecords()" class="text-primary hover:bg-blue-50 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
                 </div>
                 <input type="text" id="searchTournamentHistory" onkeyup="filterRecords()" placeholder="ابحث باسم البطولة..." class="stitch-input mb-4">
-                
                 <div id="recordsArea" class="space-y-4 pb-10"></div>
             </section>
 
@@ -236,11 +233,9 @@
                 <h2 class="font-bold text-lg text-slate-800">صندوق الدعوات</h2>
                 <button onclick="loadMyInvitations()" class="text-primary text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
             </div>
-            
             <div id="invitationsArea" class="space-y-4 min-h-[50vh]"></div>
-            
             <button onclick="openReport(currentLoggedInJudge.JudgeID)" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold shadow-md flex items-center justify-center gap-2 transition-colors">
-                <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي (CV)
+                <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي
             </button>
         </main>
     </div>
@@ -294,24 +289,61 @@
         const API_URL = 'https://judge.olivesom3a.workers.dev/?token=MySuperSecretKey2024'; 
         let allJudgesData = [], currentSuggestions = [], isSaving = false, tournamentsHistory = [];
         let currentRole = null, currentLoggedInJudge = null;
-        
         let currentDistribution = [], currentDistCourtsCount = 1, currentDistTournament = '';
 
         function createEl(tag, className, innerHTML = '') { const el = document.createElement(tag); if(className) el.className = className; if(innerHTML) el.innerHTML = innerHTML; return el; }
 
         function initApp() { document.getElementById('login-view').style.display = 'flex'; }
 
-        // --- Cleanup Print Utility (المسؤول عن إعادة الإخفاء بعد الطباعة) ---
-        function cleanupPrint() {
-            document.querySelectorAll('.print-target').forEach(el => {
-                el.classList.remove('print-target');
-                if(el.id === 'printMainListArea') {
-                    el.classList.add('hidden', 'no-print');
-                }
-            });
+        // --- محرك الطباعة الجذري ضد الورقة البيضاء ---
+        let isPrinting = false;
+        let currentPrintTargetId = null;
+        let currentPrintWasHidden = false;
+
+        function executePrint(elementId, wasHidden) {
+            if(isPrinting) return;
+            isPrinting = true;
+            currentPrintTargetId = elementId;
+            currentPrintWasHidden = wasHidden;
+            
+            const el = document.getElementById(elementId);
+            el.classList.add('print-target');
+            if(wasHidden) el.classList.remove('hidden', 'no-print');
+            
+            // إخفاء الشاشات الرئيسية لمنع تداخل أبعاد الشاشة
+            document.querySelectorAll('.app-view').forEach(v => v.style.display = 'none');
+            document.getElementById('login-view').style.display = 'none';
+            
+            // تأخير 600 جزء من الثانية ليتمكن المتصفح من رسم النافذة بشكل مثالي
+            setTimeout(() => {
+                window.print();
+            }, 600);
         }
-        // الاستماع لحدث إغلاق نافذة الطباعة لتنظيف الفئات بأمان
-        window.addEventListener('afterprint', cleanupPrint);
+
+        function cleanupPrintState() {
+            if(!isPrinting) return;
+            isPrinting = false;
+            
+            if(currentPrintTargetId) {
+                const el = document.getElementById(currentPrintTargetId);
+                if(el) {
+                    el.classList.remove('print-target');
+                    if(currentPrintWasHidden) el.classList.add('hidden', 'no-print');
+                }
+            }
+            
+            currentPrintTargetId = null;
+            
+            // إعادة الشاشات لحالتها
+            if(currentRole === 'admin') document.getElementById('admin-view').style.display = 'block';
+            else if(currentRole === 'referee') document.getElementById('referee-view').style.display = 'block';
+            else document.getElementById('login-view').style.display = 'flex';
+        }
+
+        // الاستماع لإغلاق نافذة الطباعة للتنظيف التلقائي
+        window.addEventListener('afterprint', cleanupPrintState);
+        window.addEventListener('focus', () => { if(isPrinting) setTimeout(cleanupPrintState, 1500); });
+        // ------------------------------------------
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -339,6 +371,7 @@
             } catch(error) { Swal.fire('فشل الاتصال', error.message, 'error'); } 
             finally { btn.innerHTML = 'دخول للمنصة'; btn.disabled = false; }
         }
+        
         function logout() { location.reload(); }
 
         function showAdminScreen(id) {
@@ -485,6 +518,7 @@
         function changeDistributionCourt(index, newCourt) { currentDistribution[index].court = parseInt(newCourt); renderCourtDistribution(); }
         function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
 
+        // --- الطباعة الآمنة ---
         function printCourtDistribution() {
             document.getElementById('printTournamentName').innerText = currentDistTournament;
             let tbody = '';
@@ -500,19 +534,14 @@
                 }
             }
             document.getElementById('printTableBody').innerHTML = tbody;
-            
-            const printArea = document.getElementById('printMainListArea');
-            printArea.classList.remove('hidden', 'no-print'); 
-            printArea.classList.add('print-target');
-            
-            // تأخير زمني للسماح للمتصفح برسم الجدول قبل فتح نافذة الطباعة
-            setTimeout(() => {
-                window.print();
-                // سيتم التنظيف تلقائياً بواسطة onafterprint، ولكن نضع هذا للاحتياط
-                setTimeout(cleanupPrint, 3000); 
-            }, 300);
+            executePrint('printMainListArea', true);
         }
 
+        function printReport() {
+            executePrint('reportModal', false);
+        }
+
+        // --- Referee Functions ---
         async function loadMyInvitations() {
             const area = document.getElementById('invitationsArea'); area.innerHTML = '<div class="text-center p-8"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
             try {
@@ -542,6 +571,7 @@
             }
         }
 
+        // --- Shared ---
         async function loadAllJudges() {
             const res = await fetch(`${API_URL}&action=getJudges`).then(r=>r.json());
             if(res.status === 'success') { allJudgesData = res.data; document.getElementById('allJudgesTableBody').innerHTML = res.data.map(j => `<tr class="border-b"><td class="p-3 font-bold">${j.Name}</td><td class="p-3 text-center text-xs">${j.Category}</td><td class="p-3 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary bg-primary/10 p-1.5 rounded-lg"><span class="material-symbols-outlined text-sm align-middle">visibility</span></button></td></tr>`).join(''); }
@@ -562,18 +592,7 @@
                 }
             } catch(e) {}
         }
-        
         function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        
-        function printReport() { 
-            const modal = document.getElementById('reportModal'); 
-            modal.classList.add('print-target'); 
-            
-            setTimeout(() => {
-                window.print(); 
-                setTimeout(cleanupPrint, 3000); 
-            }, 300);
-        }
     </script>
 </body>
 </html>
