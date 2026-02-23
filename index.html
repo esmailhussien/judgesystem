@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" class="light">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>بوابة إدارة الحكام الذكية</title>
-    
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <meta name="theme-color" content="#f6f7f8">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script id="tailwind-config">
@@ -16,563 +19,517 @@
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: { "primary": "#137fec", "background-light": "#f6f7f8", "background-dark": "#101922" },
-                    fontFamily: { "display": ["Tajawal", "Lexend", "sans-serif"] }
+                    colors: { "primary": "#137fec", "background-light": "#f6f7f8", "background-dark": "#101922", "accent": "#f59e0b" },
+                    fontFamily: { "display": ["Tajawal", "Lexend", "sans-serif"] },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
+                        'glow': '0 0 20px rgba(19, 127, 236, 0.4)'
+                    }
                 }
             }
         }
     </script>
-    <style>
-        body { font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; min-height: 100vh; background-color: #f6f7f8; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        .stitch-input { width: 100%; height: 3.5rem; background-color: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0 1rem; font-size: 1rem; outline: none; transition: all 0.2s; }
-        .stitch-input:focus { border-color: #137fec; box-shadow: 0 0 0 2px rgba(19, 127, 236, 0.2); }
-        .app-view { display: none; } 
-        
-        /* تأثيرات القائمة العلوية والسفلية */
-        .nav-btn.active { color: #2563eb; font-weight: bold; border-bottom: 3px solid #2563eb; }
-        .nav-item.active { color: #137fec !important; }
-        .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
-
-        @media print {
-            @page { size: A4; margin: 10mm; }
-            html, body { height: auto !important; overflow: visible !important; background: white !important; }
-            
-            body > *:not(.print-target) { display: none !important; }
-            
-            .no-print { display: none !important; }
-            .print-target { display: block !important; position: static !important; width: 100% !important; height: auto !important; visibility: visible !important; background: white !important; overflow: visible !important; }
-            .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
-            
-            #reportModal.print-target { position: static !important; padding: 0 !important; }
-            #reportModalContent { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; overflow: visible !important; transform: none !important; }
-            .print-target .min-h-screen { min-height: 0 !important; }
-            
-            table.print-table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
-            table.print-table th, table.print-table td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; }
-            table.print-table th { background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; }
-            .court-header { background-color: #cbd5e1 !important; font-weight: bold; font-size: 16px; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="text-slate-900 pb-24" onload="initApp()">
 
-    <div id="login-view" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
-            <div class="text-center mb-8">
-                <div class="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="material-symbols-outlined text-4xl text-primary">sports</span>
-                </div>
-                <h1 class="text-2xl font-bold text-slate-800">بوابة الحكام الإلكترونية</h1>
-                <p class="text-sm text-slate-500 mt-2">تسجيل الدخول للمنصة</p>
+<body class="text-slate-900 pb-24 bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0]" onload="initApp()">
+
+    <div id="login-view" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        <!-- Background Decorations -->
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full blur-xl opacity-30 transform-gpu"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full blur-xl opacity-30 transform-gpu"></div>
+
+        <div
+            class="glass-panel p-8 rounded-[2rem] shadow-glass w-full max-w-md border border-white/50 relative z-10 fade-in">
+            <div class="text-center mb-10">
+                <div
+                    class="bg-gradient-to-tr from-primary to-blue-400 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-glow hover-scale">
+                    <i class="ri-whistle-line text-5xl text-white"></i></div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">بوابة الحكام الإلكترونية</h1>
+                <p class="text-md text-slate-500 mt-2 font-medium">نظام الإدارة المركزية الموحد</p>
             </div>
-            
-            <form onsubmit="handleLogin(event)" class="space-y-5">
-                <div>
+            <form onsubmit="handleLogin(event)" class="space-y-6">
+                <div class="relative">
                     <label class="block text-sm font-bold text-slate-700 mb-2">اسم المستخدم (الرقم القومي)</label>
-                    <input type="text" id="loginUser" class="stitch-input" required>
+                    <div class="relative">
+                        <i class="ri-user-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                        <input type="text" id="loginUser"
+                            class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50" required
+                            placeholder="أدخل الرقم القومي">
+                    </div>
                 </div>
-                <div>
+                <div class="relative">
                     <label class="block text-sm font-bold text-slate-700 mb-2">كلمة المرور (رقم الهاتف)</label>
-                    <input type="password" id="loginPass" class="stitch-input" required>
+                    <div class="relative">
+                        <i
+                            class="ri-lock-password-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                        <input type="password" id="loginPass"
+                            class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50" required
+                            placeholder="أدخل رقم الهاتف">
+                    </div>
                 </div>
-                <button type="submit" id="loginBtn" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-md transition-all text-lg mt-2">
-                    دخول للمنصة
+                <button type="submit" id="loginBtn"
+                    class="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 text-lg mt-4 flex justify-center items-center gap-2 group">
+                    دخول للمنصة <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i>
                 </button>
             </form>
         </div>
     </div>
 
+    <!-- Admin View -->
     <div id="admin-view" class="app-view">
-        <header class="sticky top-0 z-30 bg-background-light/80 backdrop-blur-md border-b border-slate-200 no-print hidden md:block">
-            <div class="flex items-center px-4 h-16 justify-between">
-                <div class="flex items-center gap-4">
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">shield_person</span> نظام الحكام
-Pro
-                    </h1>
+        <header
+            class="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-slate-200/50 shadow-sm no-print hidden md:block">
+            <div class="flex items-center px-6 h-20 justify-between max-w-7xl mx-auto">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary/10 p-2 rounded-xl"><i class="ri-shield-user-fill text-2xl text-primary"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-800">الإدارة المركزية</h1>
                 </div>
                 <div class="flex space-x-2 space-x-reverse h-full items-center">
-                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard" class="nav-btn active h-full px-3 py-2 text-slate-600 hover:text-blue-600">الإحصائيات</button>
-                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">الترشيح</button>
-                    <button onclick="showAdminScreen('records')" id="btn-admin-records" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">السجلات والملاعب</button>
-                    <button onclick="showAdminScreen('database')" id="btn-admin-database" class="nav-btn h-full px-3 py-2 text-slate-600 hover:text-blue-600">قاعدة الحكام</button>
-                    <button onclick="logout()" class="h-full px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg mr-2"><span class="material-symbols-outlined text-xl align-middle">logout</span></button>
+                    <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard"
+                        class="nav-btn active h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
+                            class="ri-dashboard-line text-lg"></i> الإحصائيات</button>
+                    <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate"
+                        class="nav-btn h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
+                            class="ri-user-add-line text-lg"></i> الترشيح</button>
+                    <button onclick="showAdminScreen('records')" id="btn-admin-records"
+                        class="nav-btn h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
+                            class="ri-history-line text-lg"></i> السجلات والملاعب</button>
+                    <button onclick="showAdminScreen('database')" id="btn-admin-database"
+                        class="nav-btn h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
+                            class="ri-team-line text-lg"></i> قاعدة الحكام</button>
+                    <div class="w-px h-8 bg-slate-200 mx-3"></div>
+                    <button onclick="logout()"
+                        class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 font-bold rounded-xl transition-colors flex items-center gap-2"><i
+                            class="ri-logout-circle-r-line"></i> خروج</button>
                 </div>
             </div>
         </header>
-        
-        <header class="sticky top-0 z-30 bg-background-light/90 backdrop-blur-md border-b border-slate-200 no-print md:hidden px-4 py-3 flex justify-between items-center">
-            <h1 class="text-lg font-bold tracking-tight text-slate-800">نظام الإدارة</h1>
-            <button onclick="logout()" class="text-red-500"><span class="material-symbols-outlined">logout</span></button>
+
+        <!-- Mobile Header (Admin) -->
+        <header
+            class="sticky top-0 z-30 glass-panel border-b border-white/50 no-print md:hidden px-4 py-4 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="bg-primary/10 p-1.5 rounded-lg"><i class="ri-shield-user-fill text-xl text-primary"></i>
+                </div>
+                <h1 class="text-xl font-extrabold tracking-tight text-slate-800">نظام الإدارة</h1>
+            </div>
+            <button onclick="logout()" class="text-red-500 bg-red-50 p-2 rounded-full hover:bg-red-100"><i
+                    class="ri-logout-circle-r-line text-xl"></i></button>
         </header>
 
-        <main class="max-w-5xl mx-auto px-4 pt-6 no-print">
-            
-            <section id="admin-screen-dashboard" class="admin-section space-y-6 fade-in">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="material-symbols-outlined text-3xl text-blue-300 mb-1">groups</span><p class="text-slate-500 text-xs font-bold uppercase">إجمالي الحكام</p><h3 class="text-3xl font-bold text-slate-800" id="kpi-total">-</h3></div>
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="material-symbols-outlined text-3xl text-green-300 mb-1">verified_user</span><p class="text-slate-500 text-xs font-bold uppercase">نشط</p><h3 class="text-3xl font-bold text-green-600" id="kpi-active">-</h3></div>
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="material-symbols-outlined text-3xl text-red-300 mb-1">person_off</span><p class="text-slate-500 text-xs font-bold uppercase">غير نشط</p><h3 class="text-3xl font-bold text-red-500" id="kpi-inactive">-</h3></div>
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center bg-orange-50"><span class="material-symbols-outlined text-3xl text-orange-300 mb-1">hourglass_empty</span><p class="text-orange-600 text-xs font-bold uppercase">دعوات في الانتظار</p><h3 class="text-3xl font-bold text-orange-600" id="kpi-pending">-</h3></div>
+        <main class="max-w-6xl mx-auto px-4 pt-8 no-print pb-32 md:pb-10">
+
+            <section id="admin-screen-dashboard" class="admin-section space-y-8 fade-in block">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-2xl font-bold text-slate-800">نظرة عامة على النظام</h2>
                 </div>
-                <div class="bg-white rounded-2xl border shadow-sm p-5">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">pie_chart</span> توزيع الفئات</h3>
-                    <div class="grid grid-cols-3 md:grid-cols-5 gap-3 text-center">
-                        <div><p class="text-xs font-bold text-slate-500 mb-1">دولي</p><p class="text-xl font-bold text-primary" id="kpi-dwali">-</p></div>
-                        <div><p class="text-xs font-bold text-slate-500 mb-1">قاري</p><p class="text-xl font-bold text-primary" id="kpi-kari">-</p></div>
-                        <div><p class="text-xs font-bold text-slate-500 mb-1">أولى</p><p class="text-xl font-bold text-primary" id="kpi-oula">-</p></div>
-                        <div><p class="text-xs font-bold text-slate-500 mb-1">ثانية</p><p class="text-xl font-bold text-primary" id="kpi-thania">-</p></div>
-                        <div><p class="text-xs font-bold text-slate-500 mb-1">ثالثة</p><p class="text-xl font-bold text-primary" id="kpi-thalitha">-</p></div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="glass-panel p-6 rounded-[1.5rem] text-center hover-scale group cursor-default">
+                        <div
+                            class="bg-blue-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
+                            <i class="ri-group-line text-3xl text-blue-500"></i></div>
+                        <p class="text-slate-500 text-sm font-bold mt-2">إجمالي الحكام</p>
+                        <h3 class="text-4xl font-extrabold text-slate-800 mt-1" id="kpi-total">-</h3>
+                    </div>
+                    <div
+                        class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-green-400 text-center hover-scale group cursor-default">
+                        <div
+                            class="bg-green-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-100 transition-colors">
+                            <i class="ri-checkbox-circle-line text-3xl text-green-500"></i></div>
+                        <p class="text-slate-500 text-sm font-bold mt-2">نشط الآن</p>
+                        <h3 class="text-4xl font-extrabold text-green-600 mt-1" id="kpi-active">-</h3>
+                    </div>
+                    <div
+                        class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-red-400 text-center hover-scale group cursor-default">
+                        <div
+                            class="bg-red-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-red-100 transition-colors">
+                            <i class="ri-close-circle-line text-3xl text-red-500"></i></div>
+                        <p class="text-slate-500 text-sm font-bold mt-2">غير متاح</p>
+                        <h3 class="text-4xl font-extrabold text-red-500 mt-1" id="kpi-inactive">-</h3>
+                    </div>
+                    <div
+                        class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-accent bg-orange-50/50 text-center hover-scale group cursor-default relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-5"><i class="ri-time-line text-8xl"></i></div>
+                        <div
+                            class="bg-orange-100 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-orange-200 transition-colors relative z-10">
+                            <i class="ri-loader-2-line text-3xl text-orange-500 animate-spin-slow"></i></div>
+                        <p class="text-orange-700 text-sm font-bold mt-2 relative z-10">دعوات قيد الانتظار</p>
+                        <h3 class="text-4xl font-extrabold text-orange-600 mt-1 relative z-10" id="kpi-pending">-</h3>
                     </div>
                 </div>
             </section>
 
-            <section id="admin-screen-nominate" class="admin-section hidden space-y-6 fade-in">
-                <form class="space-y-6" onsubmit="event.preventDefault();">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold text-slate-700 mb-1">اسم البطولة</label><input type="text" id="tournamentName" class="stitch-input" placeholder="اسم البطولة"></div>
-                        <div><label class="block text-sm font-semibold text-slate-700 mb-1">العدد الكلي المطلوب</label><input type="number" id="totalJudges" value="0" min="1" class="stitch-input font-bold text-lg text-primary text-center"></div>
+            <section id="admin-screen-nominate" class="admin-section hidden space-y-8 fade-in">
+
+                <div class="flex justify-center mb-8 relative z-10">
+                    <div
+                        class="bg-white/60 backdrop-blur-sm p-1.5 rounded-2xl w-max mx-auto shadow-sm border border-slate-200 flex gap-1">
+                        <button type="button" id="btn-mode-auto" onclick="setNomMode('auto')"
+                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-md transition-all flex items-center gap-2"><i
+                                class="ri-magic-line"></i> ترشيح ذكي</button>
+                        <button type="button" id="btn-mode-manual" onclick="setNomMode('manual')"
+                            class="px-8 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/80 transition-all flex items-center gap-2"><i
+                                class="ri-user-add-line"></i> تحديد يدوي</button>
                     </div>
-                    <div class="bg-white border rounded-2xl p-5 shadow-sm text-center">
-                        <label class="block text-sm font-semibold text-slate-700 mb-4">توزيع الفئات</label>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <div><label class="text-xs font-bold text-slate-500 mb-1 block">دولي</label><input type="number" id="c_dwali" value="0" min="0" class="w-full h-12 bg-slate-50 border rounded-lg text-center font-bold outline-none focus:border-primary"></div>
-                            <div><label class="text-xs font-bold text-slate-500 mb-1 block">قاري</label><input type="number" id="c_kari" value="0" min="0" class="w-full h-12 bg-slate-50 border rounded-lg text-center font-bold outline-none focus:border-primary"></div>
-                            <div><label class="text-xs font-bold text-slate-500 mb-1 block">أولى</label><input type="number" id="c_oula" value="0" min="0" class="w-full h-12 bg-slate-50 border rounded-lg text-center font-bold outline-none focus:border-primary"></div>
-                            <div><label class="text-xs font-bold text-slate-500 mb-1 block">ثانية</label><input type="number" id="c_thania" value="0" min="0" class="w-full h-12 bg-slate-50 border rounded-lg text-center font-bold outline-none focus:border-primary"></div>
-                            <div><label class="text-xs font-bold text-slate-500 mb-1 block">ثالثة</label><input type="number" id="c_thalitha" value="0" min="0" class="w-full h-12 bg-slate-50 border rounded-lg text-center font-bold outline-none focus:border-primary"></div>
+                </div>
+
+                <form class="space-y-8 glass-panel p-6 md:p-8 rounded-[2rem]" onsubmit="event.preventDefault();">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">اسم أو وصف البطولة</label>
+                            <div class="relative">
+                                <i class="ri-trophy-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="tournamentName"
+                                    class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50"
+                                    placeholder="مثال: بطولة الجمهورية للناشئين">
+                            </div>
+                        </div>
+                        <div id="totalJudgesWrapper">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">العدد الكلي المطلوب</label>
+                            <div class="relative">
+                                <i class="ri-team-line absolute right-4 top-1/2 -translate-y-1/2 text-primary"></i>
+                                <input type="number" id="totalJudges" value="0" min="1"
+                                    class="stitch-input pl-4 pr-12 font-bold text-2xl text-primary text-center">
+                            </div>
                         </div>
                     </div>
-                    <button onclick="getSuggestions()" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2"><span class="material-symbols-outlined">magic_button</span> توليد قائمة الترشيح</button>
+
+                    <div id="auto-section">
+                        <div class="bg-slate-50/50 rounded-2xl p-6 border border-slate-200 mb-6">
+                            <label class="block text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><i
+                                    class="ri-pie-chart-2-line text-primary"></i> توزيع الفئات المطلوبة</label>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                                    <label class="text-xs font-bold text-slate-500 mb-2 block">دولي</label><input
+                                        type="number" id="c_dwali" value="0" min="0"
+                                        class="w-full text-center font-bold text-lg border-b-2 border-slate-200 focus:border-primary outline-none bg-transparent pb-1 transition-colors">
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                                    <label class="text-xs font-bold text-slate-500 mb-2 block">قاري</label><input
+                                        type="number" id="c_kari" value="0" min="0"
+                                        class="w-full text-center font-bold text-lg border-b-2 border-slate-200 focus:border-primary outline-none bg-transparent pb-1 transition-colors">
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                                    <label class="text-xs font-bold text-slate-500 mb-2 block">أولى</label><input
+                                        type="number" id="c_oula" value="0" min="0"
+                                        class="w-full text-center font-bold text-lg border-b-2 border-slate-200 focus:border-primary outline-none bg-transparent pb-1 transition-colors">
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                                    <label class="text-xs font-bold text-slate-500 mb-2 block">ثانية</label><input
+                                        type="number" id="c_thania" value="0" min="0"
+                                        class="w-full text-center font-bold text-lg border-b-2 border-slate-200 focus:border-primary outline-none bg-transparent pb-1 transition-colors">
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                                    <label class="text-xs font-bold text-slate-500 mb-2 block">ثالثة</label><input
+                                        type="number" id="c_thalitha" value="0" min="0"
+                                        class="w-full text-center font-bold text-lg border-b-2 border-slate-200 focus:border-primary outline-none bg-transparent pb-1 transition-colors">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="getSuggestions()"
+                            class="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-5 rounded-2xl shadow-lg hover:shadow-glow transition-all duration-300 flex justify-center items-center gap-3 text-lg"><i
+                                class="ri-bard-fill text-xl"></i> توليد قائمة الترشيح بالذكاء</button>
+                    </div>
+
+                    <div id="manual-section" class="hidden bg-slate-50/50 rounded-2xl p-6 border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-4">البحث وإضافة الحكام للقائمة</label>
+                        <div class="flex gap-3">
+                            <div class="relative flex-1">
+                                <i class="ri-search-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="manualJudgeSearch" list="judgesDatalist"
+                                    class="stitch-input pr-12 rounded-xl" placeholder="اكتب اسم الحكم أو فئته هنا...">
+                            </div>
+                            <datalist id="judgesDatalist"></datalist>
+                            <button type="button" onclick="addManualJudge()"
+                                class="bg-slate-800 text-white px-8 rounded-xl hover:bg-slate-900 transition-all flex items-center justify-center gap-2 shadow-sm"><i
+                                    class="ri-add-line text-xl"></i> إضافة</button>
+                        </div>
+                    </div>
                 </form>
-                
-                <div id="resultsWrapper" class="hidden mt-8">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 border-b pb-2">القائمة المبدئية (<span id="draftCount">0</span>)</h3>
-                    <div id="suggestionsArea" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"></div>
-                    <button onclick="saveFinalList()" id="saveBtn" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-md flex justify-center items-center gap-2">
-                        <span class="material-symbols-outlined">send</span> إرسال الدعوات للحكام المختارين
+
+                <div id="resultsWrapper" class="hidden mt-10 p-6 glass-panel rounded-[2rem]">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200">
+                        <h3 class="font-extrabold text-xl text-slate-800 flex items-center gap-2"><i
+                                class="ri-list-check text-primary"></i> القائمة النهائية للبطولة</h3>
+                        <span
+                            class="bg-blue-100 text-blue-700 font-bold px-4 py-1.5 rounded-full text-sm shadow-sm flex items-center gap-1"><i
+                                class="ri-user-line"></i> <span id="draftCount">0</span> تم اختيارهم</span>
+                    </div>
+                    <div id="suggestionsArea" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+                    <button onclick="saveFinalList()" id="saveBtn"
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-5 rounded-xl shadow-lg hover:shadow-glow transition-all flex justify-center items-center gap-2 text-lg">
+                        <i class="ri-send-plane-fill text-xl"></i> اعتماد التشكيل وإرسال الدعوات فوراً
                     </button>
                 </div>
             </section>
-            
+
             <section id="admin-screen-records" class="admin-section hidden space-y-6 fade-in">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-slate-800">متابعة وتوزيع الملاعب</h2>
-                    <button onclick="loadRecords()" class="text-primary hover:bg-blue-50 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
+                <div
+                    class="glass-panel p-6 rounded-[2rem] mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-primary/10 p-2 rounded-xl"><i
+                                class="ri-calendar-event-line text-2xl text-primary"></i></div>
+                        <h2 class="text-2xl font-extrabold text-slate-800">متابعة البطولات والملاعب</h2>
+                    </div>
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 md:w-64">
+                            <i class="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchTournamentHistory" onkeyup="filterRecords()"
+                                placeholder="ابحث في السجلات..."
+                                class="w-full h-12 pl-4 pr-10 border border-slate-200 rounded-xl outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+                        </div>
+                        <button onclick="loadRecords()"
+                            class="bg-white border border-slate-200 text-primary hover:bg-slate-50 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-colors"><i
+                                class="ri-refresh-line"></i> تحديث</button>
+                    </div>
                 </div>
-                <input type="text" id="searchTournamentHistory" onkeyup="filterRecords()" placeholder="ابحث باسم البطولة..." class="stitch-input mb-4">
-                
-                <div id="recordsArea" class="space-y-4 pb-10"></div>
+                <div id="recordsArea" class="space-y-6 pb-10"></div>
             </section>
 
             <section id="admin-screen-database" class="admin-section hidden space-y-6 fade-in">
-                <div class="flex gap-3 mb-4">
-                    <input type="text" id="searchJudgeName" onkeyup="filterJudges()" placeholder="بحث بالاسم..." class="stitch-input flex-1">
-                    <select id="filterCategory" onchange="filterJudges()" class="stitch-input w-32 appearance-none bg-slate-50 pl-8" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E'); background-position: left 0.5rem center; background-repeat: no-repeat; background-size: 1.25rem;"><option value="all">الكل</option><option value="دولي">دولي</option><option value="قاري">قاري</option><option value="اولى">أولى</option><option value="ثانية">ثانية</option><option value="ثالثة">ثالثة</option></select>
+                <div class="glass-panel p-6 rounded-[2rem] mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="relative flex-1">
+                            <i class="ri-search-2-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchJudgeName" onkeyup="filterJudges()"
+                                placeholder="ابحث عن حكم بالاسم..." class="stitch-input pr-12 w-full">
+                        </div>
+                        <div class="relative w-full md:w-48">
+                            <i class="ri-filter-3-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <select id="filterCategory" onchange="filterJudges()"
+                                class="stitch-input pr-12 w-full appearance-none bg-white cursor-pointer hover:border-primary transition-colors">
+                                <option value="all">كل الفئات</option>
+                                <option value="دولي">دولي</option>
+                                <option value="قاري">قاري</option>
+                                <option value="اولى">أولى</option>
+                                <option value="ثانية">ثانية</option>
+                                <option value="ثالثة">ثالثة</option>
+                            </select>
+                            <i
+                                class="ri-arrow-down-s-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white border rounded-2xl shadow-sm overflow-x-auto pb-10">
-                    <table class="w-full text-right text-sm min-w-[400px]">
-                        <thead class="bg-slate-50 border-b"><tr><th class="p-4 font-bold">الاسم</th><th class="p-4 text-center font-bold">الفئة</th><th class="p-4 text-center font-bold">ملف</th></tr></thead>
-                        <tbody id="allJudgesTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
+                <div class="glass-panel rounded-[2rem] overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right min-w-[500px]">
+                            <thead class="bg-slate-50/80 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-5 font-bold text-slate-600">اسم الحكم</th>
+                                    <th class="p-5 text-center font-bold text-slate-600">التصنيف</th>
+                                    <th class="p-5 text-center font-bold text-slate-600">الملف الشخصي</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allJudgesTableBody"
+                                class="divide-y divide-slate-100 bg-white/50 backdrop-blur-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </main>
-        
-        <div class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 pb-safe no-print md:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-            <div class="flex gap-1 px-2 pb-3 pt-2 max-w-md mx-auto">
-                <a href="#" onclick="showAdminScreen('dashboard')" id="nav-admin-dashboard" class="nav-item active flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 hover:text-primary transition-colors">
-                    <div class="flex h-8 items-center justify-center"><span class="material-symbols-outlined text-[24px]">dashboard</span></div>
-                    <p class="text-[10px] font-bold tracking-wide">الرئيسية</p>
+
+        <!-- Mobile Bottom Nav -->
+        <div
+            class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-sm border-t border-slate-200 pb-safe no-print md:hidden shadow-sm border-t border-slate-200 rounded-t-3xl">
+            <div class="flex px-2 pb-3 pt-3 max-w-md mx-auto justify-around">
+                <a href="#" onclick="showAdminScreen('dashboard')" id="nav-admin-dashboard"
+                    class="nav-item active flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                        class="ri-dashboard-fill text-2xl"></i>
+                    <p class="text-[11px] font-bold">الرئيسية</p>
                 </a>
-                <a href="#" onclick="showAdminScreen('nominate')" id="nav-admin-nominate" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 hover:text-primary transition-colors">
-                    <div class="flex h-8 items-center justify-center"><span class="material-symbols-outlined text-[24px]">assignment_add</span></div>
-                    <p class="text-[10px] font-bold tracking-wide">ترشيح</p>
+                <a href="#" onclick="showAdminScreen('nominate')" id="nav-admin-nominate"
+                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                        class="ri-user-add-fill text-2xl"></i>
+                    <p class="text-[11px] font-bold">ترشيح</p>
                 </a>
-                <a href="#" onclick="showAdminScreen('records')" id="nav-admin-records" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 hover:text-primary transition-colors">
-                    <div class="flex h-8 items-center justify-center"><span class="material-symbols-outlined text-[24px]">history</span></div>
-                    <p class="text-[10px] font-bold tracking-wide">السجلات</p>
+                <a href="#" onclick="showAdminScreen('records')" id="nav-admin-records"
+                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                        class="ri-history-line text-2xl"></i>
+                    <p class="text-[11px] font-bold">السجلات</p>
                 </a>
-                <a href="#" onclick="showAdminScreen('database')" id="nav-admin-database" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 hover:text-primary transition-colors">
-                    <div class="flex h-8 items-center justify-center"><span class="material-symbols-outlined text-[24px]">groups</span></div>
-                    <p class="text-[10px] font-bold tracking-wide">الحكام</p>
+                <a href="#" onclick="showAdminScreen('database')" id="nav-admin-database"
+                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                        class="ri-team-fill text-2xl"></i>
+                    <p class="text-[11px] font-bold">الحكام</p>
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- Referee View -->
     <div id="referee-view" class="app-view">
-        <header class="sticky top-0 z-30 bg-primary text-white backdrop-blur-md shadow-md no-print">
-            <div class="flex items-center px-4 h-16 justify-between max-w-md mx-auto">
-                <div class="flex items-center gap-3">
-                    <img id="refUserPhoto" src="" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm">
-                    <div><h1 class="text-sm font-bold" id="refUserName">-</h1><p class="text-[10px] text-blue-200" id="refUserCat">-</p></div>
+        <header class="sticky top-0 z-30 bg-gradient-to-r from-primary to-blue-600 text-white shadow-lg no-print">
+            <div class="flex items-center px-4 h-20 justify-between max-w-md mx-auto">
+                <div class="flex items-center gap-4 cursor-pointer hover:bg-white/10 p-2 rounded-xl transition-colors"
+                    onclick="openReport(currentLoggedInJudge.JudgeID)">
+                    <div class="relative">
+                        <img id="refUserPhoto" src=""
+                            class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm bg-white">
+                        <div
+                            class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-primary rounded-full">
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold leading-tight" id="refUserName">-</h1>
+                        <p class="text-xs text-blue-200 mt-1 font-medium bg-black/20 px-2 py-0.5 rounded-full inline-block"
+                            id="refUserCat">-</p>
+                    </div>
                 </div>
-                <button onclick="logout()" class="p-2 hover:bg-white/10 rounded-full"><span class="material-symbols-outlined block">logout</span></button>
+                <button onclick="logout()"
+                    class="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors flex items-center justify-center"><i
+                        class="ri-logout-circle-r-line"></i></button>
             </div>
         </header>
 
-        <main class="max-w-md mx-auto px-4 pt-6 space-y-6 no-print pb-24">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-                <h2 class="font-bold text-lg text-slate-800">صندوق الدعوات</h2>
-                <button onclick="loadMyInvitations()" class="text-primary text-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">refresh</span> تحديث</button>
+        <main class="max-w-md mx-auto px-4 pt-8 space-y-6 no-print pb-28 relative">
+            <div class="absolute top-0 right-0 w-full h-32 bg-gradient-to-b from-primary/10 to-transparent -z-10"></div>
+
+            <div
+                class="flex justify-between items-center glass-panel p-4 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-2">
+                    <i class="ri-mail-unread-line text-2xl text-slate-700"></i>
+                    <h2 class="font-extrabold text-lg text-slate-800">صندوق الدعوات</h2>
+                </div>
+                <button onclick="loadMyInvitations()"
+                    class="text-primary bg-blue-50 hover:bg-blue-100 p-2 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors"><i
+                        class="ri-refresh-line"></i> تحديث</button>
             </div>
-            
             <div id="invitationsArea" class="space-y-4 min-h-[50vh]"></div>
-            
-            <button onclick="openReport(currentLoggedInJudge.JudgeID)" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold shadow-md flex items-center justify-center gap-2 transition-colors">
-                <span class="material-symbols-outlined">person</span> استعراض ملفي الشخصي
-            </button>
         </main>
+
+        <!-- Ref bottom nav equivalent -->
+        <div
+            class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-sm border-t border-slate-200 pb-safe no-print md:hidden shadow-sm border-t border-slate-200 rounded-t-3xl px-4 py-3">
+            <button onclick="openReport(currentLoggedInJudge.JudgeID)"
+                class="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95">
+                <i class="ri-user-settings-line text-xl"></i> استعراض ملفي وسجلي
+            </button>
+        </div>
     </div>
 
-    <div id="courtDistributionModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="min-h-screen px-2 md:px-4 text-center flex items-center justify-center py-10">
-            <div class="inline-block w-full max-w-4xl text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-6 h-16 flex items-center justify-between">
-                    <button onclick="closeCourtDistribution()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined">close</span></button>
-                    <h1 class="text-lg font-bold text-slate-800">توزيع الملاعب - <span id="distTournamentName" class="text-primary"></span></h1>
-                    <button onclick="printCourtDistribution()" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-black transition-colors shadow-sm"><span class="material-symbols-outlined text-sm">print</span> طباعة الكشف</button>
-                </nav>
-                <div class="p-4 md:p-6 overflow-y-auto bg-slate-50" id="courtDistributionArea">
+    <!-- Modals -->
+    <div id="courtDistributionModal"
+        class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm overflow-y-auto no-print fade-in">
+        <div class="min-h-screen px-2 md:px-4 flex items-center justify-center py-10">
+            <div
+                class="w-full max-w-5xl glass-panel !bg-white/95 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <nav
+                    class="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b px-6 h-20 flex items-center justify-between">
+                    <button onclick="closeCourtDistribution()"
+                        class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"><i
+                            class="ri-close-large-line"></i></button>
+                    <div class="text-center">
+                        <h1 class="text-xl font-extrabold text-slate-800">توزيع الملاعب الذكي</h1>
+                        <p class="text-sm text-primary font-bold mt-1" id="distTournamentName"></p>
                     </div>
+                    <button onclick="printCourtDistribution()"
+                        class="bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-colors shadow-md hover-scale"><i
+                            class="ri-printer-line text-lg"></i> طباعة الكشف</button>
+                </nav>
+                <div class="p-6 md:p-8 overflow-y-auto bg-slate-50/50" id="courtDistributionArea"></div>
             </div>
         </div>
     </div>
 
-    <div id="reportModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="min-h-screen px-4 text-center">
-            <div class="inline-block w-full max-w-md my-8 text-right align-middle transition-all transform bg-background-light rounded-3xl shadow-2xl overflow-hidden" id="reportModalContent">
-                <nav class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b px-4 h-14 flex items-center justify-between">
-                    <button onclick="closeReport()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-full no-print"><span class="material-symbols-outlined">close</span></button>
-                    <h1 class="text-sm font-bold text-slate-800">السيرة الذاتية (CV)</h1>
-                    <button onclick="printReport()" class="p-2 text-primary hover:bg-blue-50 rounded-full no-print"><span class="material-symbols-outlined">print</span></button>
+    <div id="reportModal"
+        class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print fade-in">
+        <div class="min-h-screen px-4 text-center flex items-center justify-center py-10">
+            <div class="inline-block w-full max-w-md text-right align-middle transition-all transform bg-white rounded-[2rem] shadow-2xl overflow-hidden relative"
+                id="reportModalContent">
+
+                <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-primary to-blue-400"></div>
+
+                <nav class="absolute top-0 left-0 right-0 z-30 px-4 h-16 flex items-center justify-between">
+                    <button onclick="closeReport()"
+                        class="w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full no-print flex items-center justify-center backdrop-blur-sm transition-colors"><i
+                            class="ri-close-line text-xl"></i></button>
+                    <button onclick="printReport()"
+                        class="w-10 h-10 bg-white/20 hover:bg-white/40 text-white rounded-full no-print flex items-center justify-center backdrop-blur-sm transition-colors"><i
+                            class="ri-printer-line text-xl"></i></button>
                 </nav>
-                <section class="bg-white px-6 pt-6 pb-6 border-b text-center print-break-inside-avoid">
-                    <div class="size-24 rounded-full border-4 border-primary/10 mx-auto mb-3 overflow-hidden shadow-inner"><img id="r-photo" src="" class="w-full h-full object-cover"></div>
-                    <h2 id="r-name" class="text-lg font-bold text-slate-800">الاسم</h2>
-                    <p id="r-category" class="text-primary font-bold text-[10px] mt-1 uppercase bg-primary/10 px-3 py-1 rounded-full inline-block">الفئة</p>
+
+                <section class="px-6 pt-16 pb-6 text-center print-break-inside-avoid relative z-10">
+                    <div
+                        class="w-28 h-28 rounded-full border-[6px] border-white mx-auto mb-4 overflow-hidden shadow-lg bg-white relative">
+                        <img id="r-photo" src="" class="w-full h-full object-cover">
+                    </div>
+                    <h2 id="r-name" class="text-2xl font-extrabold text-slate-800">الاسم</h2>
+                    <p id="r-category"
+                        class="text-primary font-bold text-xs mt-2 uppercase bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full inline-block shadow-sm">
+                        الفئة</p>
                 </section>
-                <div class="p-4 space-y-4 text-sm">
-                    <section class="bg-white rounded-xl p-4 border shadow-sm print-break-inside-avoid"><h3 class="font-bold text-slate-800 mb-2 border-b pb-2 text-xs text-primary">البيانات الأساسية</h3><div class="flex justify-between py-1"><span class="text-slate-500">رقم قومي</span><span id="r-nationalId" class="font-bold">-</span></div><div class="flex justify-between py-1"><span class="text-slate-500">موبايل</span><span id="r-phone" class="font-bold" dir="ltr">-</span></div><div class="flex justify-between py-1"><span class="text-slate-500">الحزام</span><span id="r-belt" class="font-bold">-</span></div></section>
-                    <section class="bg-white rounded-xl p-4 border shadow-sm print-break-inside-avoid">
-                        <h3 class="font-bold text-slate-800 mb-3 border-b pb-2 text-xs text-primary">إحصائيات التعيين</h3>
-                        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
-                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-100"><p class="text-[10px] text-slate-500 font-bold">إجمالي</p><p class="text-base font-bold text-slate-800" id="r-totalCount">0</p></div>
-                            <div class="bg-green-50 p-2 rounded-lg border border-green-100"><p class="text-[10px] text-green-600 font-bold">مؤكد</p><p class="text-base font-bold text-green-700" id="r-confirmedCount">0</p></div>
-                            <div class="bg-red-50 p-2 rounded-lg border border-red-100"><p class="text-[10px] text-red-600 font-bold">اعتذار</p><p class="text-base font-bold text-red-700" id="r-apologyCount">0</p></div>
+
+                <div class="p-6 pt-0 space-y-5 text-sm">
+                    <section
+                        class="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 shadow-sm print-break-inside-avoid">
+                        <h3 class="font-extrabold text-slate-800 mb-3 flex items-center gap-2"><i
+                                class="ri-profile-line text-primary"></i> البيانات الأساسية</h3>
+                        <div class="space-y-3">
+                            <div
+                                class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-100">
+                                <span class="text-slate-500 font-medium"><i class="ri-id-card-line ml-1"></i> الرقم
+                                    القومي</span><span id="r-nationalId" class="font-bold text-slate-700">-</span></div>
+                            <div
+                                class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-100">
+                                <span class="text-slate-500 font-medium"><i class="ri-smartphone-line ml-1"></i>
+                                    الهاتف</span><span id="r-phone" class="font-bold text-slate-700" dir="ltr">-</span>
+                            </div>
+                            <div
+                                class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-100">
+                                <span class="text-slate-500 font-medium"><i class="ri-star-line ml-1"></i>
+                                    الدرجة/الحزام</span><span id="r-belt" class="font-bold text-slate-700">-</span>
+                            </div>
                         </div>
-                        <div class="bg-slate-800 text-white p-2 rounded-lg mb-4 flex justify-between items-center px-3">
-                            <span class="text-xs font-bold">نسبة الحضور</span>
-                            <span class="text-sm font-bold text-yellow-400" id="r-attendancePct">0%</span>
+                    </section>
+                    <section
+                        class="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 shadow-sm print-break-inside-avoid">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-extrabold text-slate-800 flex items-center gap-2"><i
+                                    class="ri-history-line text-primary"></i> سجل المشاركات</h3>
+                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold"><span
+                                    id="r-assignCount">0</span> بطولة</span>
                         </div>
-                        <div class="flex justify-between mb-2 border-b pb-2"><h3 class="font-bold text-slate-800 text-xs text-primary">سجل البطولات</h3></div>
-                        <ul id="r-historyList" class="divide-y max-h-40 overflow-y-auto"></ul>
+                        <ul id="r-historyList" class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar"></ul>
                     </section>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Print Template -->
     <div id="printMainListArea" class="hidden no-print">
-        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;" class="print-break-inside-avoid">
-            <h1 style="font-size:22px; font-weight:bold; margin-bottom:5px;">لجنة الحكام الرئيسية</h1>
-            <h2 style="font-size:16px;">كشف تعيين الحكام لبطولة: <span id="printTournamentName" style="color: #2563eb;"></span></h2>
+        <div style="text-align:center; border-bottom:3px solid #000; padding-bottom:15px; margin-bottom:20px;"
+            class="print-break-inside-avoid">
+            <h1 style="font-size:26px; font-weight:bold; margin-bottom:8px; font-family:'Tajawal', sans-serif;">لجنة
+                الحكام الرئيسية</h1>
+            <h2 style="font-size:18px; font-family:'Tajawal', sans-serif;">كشف تعيين الحكام لبطولة: <span
+                    id="printTournamentName" style="color: #2563eb;"></span></h2>
         </div>
         <table class="print-table">
-            <thead><tr><th style="width:10%;">م</th><th style="width:60%;">اسم الحكم</th><th style="width:30%;">الفئة</th></tr></thead>
+            <thead>
+                <tr>
+                    <th style="width:10%;">م</th>
+                    <th style="width:60%;">اسم الحكم</th>
+                    <th style="width:30%;">الفئة المسجلة</th>
+                </tr>
+            </thead>
             <tbody id="printTableBody"></tbody>
         </table>
     </div>
 
-    <script>
-        const API_URL = 'https://judge.olivesom3a.workers.dev/?token=MySuperSecretKey2024'; 
-        let allJudgesData = [], currentSuggestions = [], isSaving = false, tournamentsHistory = [];
-        let currentRole = null, currentLoggedInJudge = null;
-        
-        // Court Distribution State
-        let currentDistribution = [];
-        let currentDistCourtsCount = 1;
-        let currentDistTournament = '';
-
-        function createEl(tag, className, innerHTML = '') { const el = document.createElement(tag); if(className) el.className = className; if(innerHTML) el.innerHTML = innerHTML; return el; }
-
-        function initApp() { document.getElementById('login-view').style.display = 'flex'; }
-
-        // --- Auth ---
-        async function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('loginUser').value.trim(); const pass = document.getElementById('loginPass').value.trim();
-            const btn = document.getElementById('loginBtn'); btn.innerHTML = '<span class="material-symbols-outlined animate-spin align-middle">refresh</span> جاري التحقق...'; btn.disabled = true;
-
-            try {
-                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'login', data: { username: user, password: pass } }) });
-                const textData = await response.text();
-                let res; try { res = JSON.parse(textData); } catch (e) { throw new Error("استجابة غير صالحة من السيرفر."); }
-
-                if (res.status === 'success') {
-                    currentRole = res.data.role; document.getElementById('login-view').style.display = 'none';
-                    if (currentRole === 'admin') {
-                        document.getElementById('admin-view').style.display = 'block'; showAdminScreen('dashboard');
-                    } else if (currentRole === 'referee') {
-                        currentLoggedInJudge = res.data.info;
-                        document.getElementById('referee-view').style.display = 'block';
-                        document.getElementById('refUserName').innerText = currentLoggedInJudge.Name;
-                        document.getElementById('refUserCat').innerText = `حكم ${currentLoggedInJudge.Category}`;
-                        document.getElementById('refUserPhoto').src = currentLoggedInJudge.Photo || `https://ui-avatars.com/api/?name=${currentLoggedInJudge.Name}&background=fff&color=137fec`;
-                        loadMyInvitations(); 
-                    }
-                } else { Swal.fire('خطأ', res.message, 'error'); }
-            } catch(error) { Swal.fire('فشل الاتصال', error.message, 'error'); } 
-            finally { btn.innerHTML = 'دخول للمنصة'; btn.disabled = false; }
-        }
-        function logout() { location.reload(); }
-
-        // --- Admin Navigation ---
-        function showAdminScreen(id) {
-            document.querySelectorAll('.admin-section').forEach(d => d.classList.add('hidden'));
-            
-            // تحديث قوائم الديسكتوب
-            document.querySelectorAll('#admin-view header .nav-btn').forEach(btn => { btn.classList.remove('active', 'text-blue-600'); btn.classList.add('text-slate-600'); });
-            const activeTopBtn = document.getElementById(`btn-admin-${id}`); if(activeTopBtn) { activeTopBtn.classList.add('active', 'text-blue-600'); activeTopBtn.classList.remove('text-slate-600'); }
-            
-            // تحديث قائمة الموبايل السفلية
-            document.querySelectorAll('#admin-view .nav-item').forEach(btn => { btn.classList.remove('active', 'text-primary'); btn.classList.add('text-slate-400'); });
-            const activeBotBtn = document.getElementById(`nav-admin-${id}`); if(activeBotBtn) { activeBotBtn.classList.add('active', 'text-primary'); activeBotBtn.classList.remove('text-slate-400'); }
-            
-            document.getElementById(`admin-screen-${id}`).classList.remove('hidden');
-            if(id === 'dashboard') loadDashboard(); if(id === 'database') loadAllJudges(); if(id === 'records') loadRecords(); 
+    <script src="js/script.js"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
         }
 
-        // --- Admin Functions ---
-        async function loadDashboard() {
-            try {
-                const res = await fetch(`${API_URL}&action=getDashboardStats`).then(r=>r.json());
-                if(res.status === 'success') {
-                    document.getElementById('kpi-total').innerText = res.data.total; document.getElementById('kpi-active').innerText = res.data.active;
-                    document.getElementById('kpi-inactive').innerText = res.data.inactive; document.getElementById('kpi-pending').innerText = res.data.pendingNoms;
-                    document.getElementById('kpi-dwali').innerText = res.data.catDwali || 0; document.getElementById('kpi-kari').innerText = res.data.catKari || 0;
-                    document.getElementById('kpi-oula').innerText = res.data.catOula || 0; document.getElementById('kpi-thania').innerText = res.data.catThania || 0;
-                    document.getElementById('kpi-thalitha').innerText = res.data.catThalitha || 0;
-                }
-            } catch(e) {}
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
-
-        async function getSuggestions() {
-            const tournament = document.getElementById('tournamentName').value.trim();
-            const totalJudges = parseInt(document.getElementById('totalJudges').value) || 0;
-            const c_dwali = parseInt(document.getElementById('c_dwali').value)||0, c_kari = parseInt(document.getElementById('c_kari').value)||0, c_oula = parseInt(document.getElementById('c_oula').value)||0, c_thania = parseInt(document.getElementById('c_thania').value)||0, c_thalitha = parseInt(document.getElementById('c_thalitha').value)||0;
-            if (!tournament || totalJudges <= 0) return Swal.fire('تنبيه', 'استكمل البيانات', 'warning');
-            if ((c_dwali + c_kari + c_oula + c_thania + c_thalitha) !== totalJudges) return Swal.fire('خطأ', 'مجموع الفئات لا يساوي العدد الكلي.', 'error');
-
-            Swal.fire({title: 'جاري التوليد...', didOpen: () => Swal.showLoading()});
-            try {
-                const url = `${API_URL}&action=getSmartSuggestions&c_dwali=${c_dwali}&c_kari=${c_kari}&c_oula=${c_oula}&c_thania=${c_thania}&c_thalitha=${c_thalitha}`;
-                const res = await fetch(url).then(r=>r.json());
-                if (res.status === 'success') {
-                    currentSuggestions = res.data;
-                    document.getElementById('draftCount').innerText = currentSuggestions.length;
-                    document.getElementById('suggestionsArea').innerHTML = currentSuggestions.map((j) => `<div class="bg-white p-3 rounded-xl border flex justify-between items-center"><h5 class="font-bold text-sm text-slate-700">${j.Name}</h5><span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">${j.Category}</span></div>`).join('');
-                    document.getElementById('resultsWrapper').classList.remove('hidden'); Swal.close();
-                }
-            } catch(e) {}
-        }
-
-        async function saveFinalList() {
-            if(isSaving || currentSuggestions.length === 0) return;
-            const tournament = document.getElementById('tournamentName').value.trim();
-            const confirmedList = currentSuggestions.map(j => ({id: j.JudgeID, name: j.Name, category: j.Category}));
-            const { isConfirmed } = await Swal.fire({title: 'إرسال الدعوات', text: 'سيتم إرسال دعوات للحكام، ويجب عليهم القبول لدخول التعيين النهائي.', icon: 'question', showCancelButton: true});
-            if (!isConfirmed) return;
-            isSaving = true; Swal.showLoading();
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'saveFinalList', data: { tournament, confirmed: confirmedList, apologized: [] } }) }).then(r=>r.json());
-                if(res.status === 'success') { Swal.fire('تم الإرسال', 'تم الإرسال بنجاح. تابع الردود من شاشة السجلات.', 'success'); document.getElementById('resultsWrapper').classList.add('hidden'); document.getElementById('tournamentName').value=''; }
-            } catch(e) {} finally { isSaving = false; }
-        }
-
-        // --- Records & Interactive Court Distribution ---
-        async function loadRecords() {
-            document.getElementById('recordsArea').innerHTML = '<div class="text-center p-6"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
-            try {
-                const res = await fetch(`${API_URL}&action=getTournamentsHistory`).then(r=>r.json());
-                if(res.status === 'success') { tournamentsHistory = res.data; renderRecords(tournamentsHistory); }
-            } catch(e) { document.getElementById('recordsArea').innerHTML = '<div class="text-center text-red-500">فشل التحميل</div>'; }
-        }
-
-        function filterRecords() {
-            const text = document.getElementById('searchTournamentHistory').value.toLowerCase();
-            const filtered = tournamentsHistory.filter(t => t.tournament.toLowerCase().includes(text));
-            renderRecords(filtered);
-        }
-
-        function renderRecords(data) {
-            const area = document.getElementById('recordsArea'); area.innerHTML = '';
-            if(data.length === 0) { area.innerHTML = `<div class="text-center text-slate-500 p-6">لا توجد بطولات</div>`; return; }
-
-            data.forEach(t => {
-                const card = createEl('div', 'bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md');
-                const head = createEl('div', 'flex justify-between items-center border-b border-slate-100 pb-3 mb-3');
-                head.innerHTML = `<h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><span class="material-symbols-outlined text-primary">emoji_events</span>${t.tournament}</h3><span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">${t.date}</span>`;
-                card.appendChild(head);
-
-                const body = createEl('div', 'space-y-3');
-                if (t.confirmed.length > 0) body.innerHTML += `<div><h4 class="text-xs font-bold text-green-600 mb-1">تم التعيين (${t.confirmed.length}):</h4><div class="flex flex-wrap">${t.confirmed.map(j => `<span class="inline-block bg-green-50 text-green-700 text-[11px] font-bold px-2 py-1 rounded border border-green-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
-                if (t.pending.length > 0) body.innerHTML += `<div class="pt-2 border-t border-slate-50"><h4 class="text-xs font-bold text-orange-500 mb-1">دعوات بالانتظار (${t.pending.length}):</h4><div class="flex flex-wrap">${t.pending.map(j => `<span class="inline-block bg-orange-50 text-orange-700 text-[11px] font-bold px-2 py-1 rounded border border-orange-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
-                if (t.apologized.length > 0) body.innerHTML += `<div class="pt-2 border-t border-slate-50"><h4 class="text-xs font-bold text-red-500 mb-1">اعتذارات (${t.apologized.length}):</h4><div class="flex flex-wrap">${t.apologized.map(j => `<span class="inline-block bg-red-50 text-red-700 text-[11px] font-bold px-2 py-1 rounded border border-red-100 m-0.5">${j.name} (${j.cat})</span>`).join('')}</div></div>`;
-                card.appendChild(body);
-
-                // الزر الاحترافي للتوزيع
-                if(t.confirmed.length > 0) {
-                    const actionsDiv = createEl('div', 'flex justify-end mt-4 pt-3 border-t border-slate-100');
-                    const distBtn = createEl('button', 'bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-black transition-colors shadow-md', '<span class="material-symbols-outlined text-[18px]">format_list_numbered_rtl</span> توزيع الملاعب والطباعة');
-                    distBtn.onclick = () => startCourtDistribution(t.tournament);
-                    actionsDiv.appendChild(distBtn); card.appendChild(actionsDiv);
-                }
-                area.appendChild(card);
-            });
-        }
-        // --- Court Distribution Logic ---
-        async function startCourtDistribution(tName) {
-            const tourney = tournamentsHistory.find(t => t.tournament === tName);
-            const { value: courtsCountStr } = await Swal.fire({
-                title: 'إعداد الملاعب', text: `يوجد ${tourney.confirmed.length} حكام معتمدين للبطولة. أدخل عدد الملاعب لتوزيعهم آلياً:`,
-                input: 'number', inputValue: 1, inputAttributes: { min: 1, step: 1 },
-                showCancelButton: true, confirmButtonText: 'توزيع الحكام', cancelButtonText: 'إلغاء'
-            });
-
-            if(courtsCountStr) {
-                currentDistCourtsCount = parseInt(courtsCountStr);
-                currentDistTournament = tName;
-                currentDistribution = JSON.parse(JSON.stringify(tourney.confirmed)); 
-                currentDistribution.forEach((j, i) => { j.court = (i % currentDistCourtsCount) + 1; }); // Round Robin
-                
-                document.getElementById('distTournamentName').innerText = tName;
-                renderCourtDistribution();
-                document.getElementById('courtDistributionModal').classList.remove('hidden');
-            }
-        }
-
-        function renderCourtDistribution() {
-            const area = document.getElementById('courtDistributionArea'); area.innerHTML = '';
-            for(let c = 1; c <= currentDistCourtsCount; c++) {
-                let courtJudges = currentDistribution.map((j, idx) => ({j, idx})).filter(item => item.j.court === c);
-                let courtOptions = Array.from({length: currentDistCourtsCount}, (_, k) => `<option value="${k+1}" ${k+1 === c ? 'selected' : ''}>الملعب ${k+1}</option>`).join('');
-                
-                let html = `
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6">
-                    <h4 class="font-bold text-lg text-slate-800 border-b border-slate-100 pb-3 mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">flag</span> الملعب رقم (${c}) <span class="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded mr-auto">${courtJudges.length} حكام</span></h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        ${courtJudges.map(item => `
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between">
-                                <div class="mb-3">
-                                    <h5 class="text-sm font-bold text-slate-800">${item.j.name}</h5>
-                                    <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded mt-1 inline-block">${item.j.cat}</span>
-                                </div>
-                                <div class="mt-2 border-t border-slate-200 pt-2">
-                                    <label class="block text-[10px] text-slate-500 font-bold mb-1">نقل الحكم إلى:</label>
-                                    <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="w-full text-xs border border-slate-300 rounded bg-white pr-2 pl-8 py-1.5 outline-none focus:border-primary font-bold text-slate-700 appearance-none" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27%3E%3C/path%3E%3C/svg%3E'); background-position: left 0.5rem center; background-repeat: no-repeat; background-size: 1.25rem;">
-                                        ${courtOptions}
-                                    </select>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-                area.innerHTML += html;
-            }
-        }
-
-        function changeDistributionCourt(index, newCourt) {
-            currentDistribution[index].court = parseInt(newCourt);
-            renderCourtDistribution();
-        }
-
-        function closeCourtDistribution() { document.getElementById('courtDistributionModal').classList.add('hidden'); }
-
-        function printCourtDistribution() {
-            document.getElementById('printTournamentName').innerText = currentDistTournament;
-            let tbody = '';
-            if(currentDistCourtsCount === 1) {
-                tbody = currentDistribution.map((j, i) => `<tr><td>${i + 1}</td><td><strong>${j.name}</strong></td><td>${j.cat}</td></tr>`).join('');
-            } else {
-                for(let c = 1; c <= currentDistCourtsCount; c++) {
-                    let cJudges = currentDistribution.filter(j => j.court === c);
-                    if(cJudges.length > 0) {
-                        tbody += `<tr class="court-header"><td colspan="3">الملعب رقم (${c})</td></tr>`;
-                        tbody += cJudges.map((j, i) => `<tr><td>${i + 1}</td><td><strong>${j.name}</strong></td><td>${j.cat}</td></tr>`).join('');
-                    }
-                }
-            }
-            document.getElementById('printTableBody').innerHTML = tbody;
-            const printArea = document.getElementById('printMainListArea');
-            printArea.classList.remove('hidden', 'no-print'); 
-            printArea.classList.add('print-target');
-            window.print();
-            printArea.classList.add('hidden', 'no-print'); 
-            printArea.classList.remove('print-target');
-        }
-
-        // --- Referee Functions ---
-        async function loadMyInvitations() {
-            const area = document.getElementById('invitationsArea'); area.innerHTML = '<div class="text-center p-8"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
-            try {
-                const res = await fetch(`${API_URL}&action=getMyInvitations&judgeId=${currentLoggedInJudge.JudgeID}`).then(r=>r.json());
-                if (res.status === 'success' && res.data.length > 0) {
-                    area.innerHTML = res.data.map(inv => {
-                        const isConfirmed = inv.status === 'Confirmed';
-                        const statusBadge = isConfirmed ? `<div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-lg">تم تعيينك رسمياً</div>` : `<div class="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-lg">دعوة للتحكيم (بديل)</div>`;
-                        const buttonsHtml = isConfirmed
-                            ? `<button onclick="respondInvite('${inv.tournament}', 'decline')" class="w-full bg-red-50 hover:bg-red-500 hover:text-white text-red-600 font-bold py-3 rounded-xl transition-all border border-red-200 shadow-sm"><span class="material-symbols-outlined align-middle ml-1 text-sm">cancel</span> اعتذار عن البطولة</button>`
-                            : `<div class="flex gap-3"><button onclick="respondInvite('${inv.tournament}', 'accept')" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-sm"><span class="material-symbols-outlined align-middle ml-1 text-sm">check_circle</span> قبول</button><button onclick="respondInvite('${inv.tournament}', 'decline')" class="flex-1 bg-red-50 hover:bg-red-500 hover:text-white text-red-600 font-bold py-3 rounded-xl transition-all border border-red-200 shadow-sm"><span class="material-symbols-outlined align-middle ml-1 text-sm">cancel</span> اعتذار</button></div>`;
-                        return `<div class="bg-white p-5 rounded-2xl border-2 ${isConfirmed ? 'border-green-200' : 'border-orange-200'} shadow-md relative overflow-hidden">${statusBadge}<h3 class="font-bold text-lg text-slate-800 mt-4 mb-2"><span class="material-symbols-outlined text-primary align-middle ml-1">sports_soccer</span>${inv.tournament}</h3><p class="text-xs text-slate-500 mb-5">تاريخ الإدراج: ${inv.date}</p>${buttonsHtml}</div>`;
-                    }).join('');
-                } else { area.innerHTML = `<div class="bg-white rounded-3xl p-6 border shadow-sm text-center"><div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-3xl text-primary">done_all</span></div><h2 class="font-bold text-lg text-slate-800">لا توجد دعوات حالياً</h2></div>`; }
-            } catch(e) {}
-        }
-
-        async function respondInvite(tournament, responseType) {
-            const isAccept = responseType === 'accept';
-            const { isConfirmed } = await Swal.fire({ title: isAccept ? 'تأكيد القبول' : 'تأكيد الاعتذار', text: isAccept ? 'هل أنت متأكد من قبولك؟' : 'سيتم تسجيل اعتذارك وتعيين حكم بديل. متأكد؟', icon: isAccept ? 'question' : 'warning', showCancelButton: true, confirmButtonText: 'نعم', confirmButtonColor: isAccept ? '#22c55e' : '#ef4444' });
-            if(isConfirmed) {
-                Swal.fire({title: 'جاري تسجيل الرد...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-                try {
-                    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'respondToInvitation', data: { tournament: tournament, judgeId: currentLoggedInJudge.JudgeID, response: responseType } }) }).then(r=>r.json());
-                    if(res.status === 'success') { Swal.fire('تم بنجاح', res.data, 'success'); loadMyInvitations(); } else { Swal.fire('خطأ', res.message, 'error'); }
-                } catch(e) {}
-            }
-        }
-
-        async function loadAllJudges() {
-            const res = await fetch(`${API_URL}&action=getJudges`).then(r=>r.json());
-            if(res.status === 'success') { allJudgesData = res.data; document.getElementById('allJudgesTableBody').innerHTML = res.data.map(j => `<tr class="border-b"><td class="p-3 font-bold">${j.Name}</td><td class="p-3 text-center text-xs">${j.Category}</td><td class="p-3 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary bg-primary/10 p-1.5 rounded-lg"><span class="material-symbols-outlined text-sm align-middle">visibility</span></button></td></tr>`).join(''); }
-        }
-
-        async function openReport(id) {
-            Swal.showLoading();
-            try {
-                const res = await fetch(`${API_URL}&action=getJudgeProfile&id=${id}`).then(r=>r.json());
-                if(res.status === 'success') {
-                    const info = res.data.info||{}; const history = res.data.history||[];
-                    document.getElementById('r-photo').src = info.Photo || `https://ui-avatars.com/api/?name=${info.Name}&background=fff&color=137fec`;
-                    document.getElementById('r-name').innerText = info.Name; document.getElementById('r-category').innerText = info.Category;
-                    document.getElementById('r-nationalId').innerText = info.NationalID; document.getElementById('r-phone').innerText = info.Phone; document.getElementById('r-belt').innerText = info.Belt;
-                    
-                    const confirmed = parseInt(info.AssignCount || 0); const apologized = parseInt(info.ApologyCount || 0); const total = confirmed + apologized;
-                    const pct = total > 0 ? Math.round((confirmed / total) * 100) : 0;
-                    document.getElementById('r-totalCount').innerText = total; document.getElementById('r-confirmedCount').innerText = confirmed;
-                    document.getElementById('r-apologyCount').innerText = apologized; document.getElementById('r-attendancePct').innerText = pct + '%';
-                    
-                    document.getElementById('r-historyList').innerHTML = history.length ? history.map(h => `<li class="flex justify-between py-2 border-b last:border-0"><span class="font-bold">${h.tournament}</span><span class="text-slate-400 text-[10px]">${h.date}</span></li>`).join('') : '<li class="text-center text-slate-400 py-2">لا توجد مشاركات</li>';
-                    document.getElementById('reportModal').classList.remove('hidden'); Swal.close();
-                }
-            } catch(e) {}
-        }
-        function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
-        function printReport() { const modal = document.getElementById('reportModal'); modal.classList.remove('no-print'); modal.classList.add('print-target'); window.print(); modal.classList.add('no-print'); modal.classList.remove('print-target'); }
-    </script>
+    </style>
 </body>
+
 </html>
