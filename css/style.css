@@ -1,72 +1,323 @@
-body {
-    font-family: 'Lexend', 'Tajawal', sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 100vh;
-    background-color: #f6f7f8;
+/* =========================================================
+   CSS DESIGN SYSTEM — style.css
+   Single source of truth for design tokens and base styles.
+   Print rules live in print.css (loaded via media="print").
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. DESIGN TOKENS (CSS Custom Properties)
+   --------------------------------------------------------- */
+:root {
+    /* Brand palette */
+    --color-brand-500: #137fec;
+    --color-brand-600: #2563eb;
+    --color-brand-400: #60a5fa;
+
+    /* Neutral palette */
+    --color-neutral-50: #f8fafc;
+    --color-neutral-100: #f1f5f9;
+    --color-neutral-200: #e2e8f0;
+    --color-neutral-300: #cbd5e1;
+    --color-neutral-400: #94a3b8;
+    --color-neutral-500: #64748b;
+    --color-neutral-700: #334155;
+    --color-neutral-800: #1e293b;
+    --color-neutral-900: #0f172a;
+
+    /* Semantic aliases */
+    --color-surface: #ffffff;
+    --color-surface-subtle: rgba(226, 232, 240, 0.8);
+    --color-bg: #f6f7f8;
+
+    /* Accent */
+    --color-accent: #f59e0b;
+
+    /* Shadows */
+    --shadow-glass: 0 4px 20px 0 rgba(0, 0, 0, 0.03);
+    --shadow-glow: 0 0 20px rgba(19, 127, 236, 0.4);
+
+    /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.5rem;
+    --radius-xl: 2rem;
+
+    /* Typography — single declaration point */
+    --font-primary: 'Lexend', 'Tajawal', sans-serif;
+
+    /* Transitions */
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ---------------------------------------------------------
+   2. TYPOGRAPHY & BASE RESET
+   --------------------------------------------------------- */
+body {
+    font-family: var(--font-primary);
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+/* ---------------------------------------------------------
+   3. SCROLLBAR
+   --------------------------------------------------------- */
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--color-neutral-300);
     border-radius: 10px;
 }
 
+/* ---------------------------------------------------------
+   4. FORM ELEMENTS
+   --------------------------------------------------------- */
 .stitch-input {
     width: 100%;
     height: 3.5rem;
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    padding: 0 1rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    /* Split shorthand so callers can override individual sides with pr-* / pl-* */
+    padding-block: 0;
+    padding-inline: 1rem;
     font-size: 1rem;
     outline: none;
-    transition: all 0.2s;
+    transition: border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .stitch-input:focus {
-    border-color: #137fec;
+    border-color: var(--color-brand-500);
     box-shadow: 0 0 0 2px rgba(19, 127, 236, 0.2);
 }
 
+/* =========================================================
+   CSS DESIGN SYSTEM — style.css
+   Single source of truth for design tokens and base styles.
+   Print rules live in print.css (loaded via media="print").
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. DESIGN TOKENS (CSS Custom Properties)
+   --------------------------------------------------------- */
+:root {
+    /* Brand palette */
+    --color-brand-500: #137fec;
+    --color-brand-600: #2563eb;
+    --color-brand-400: #60a5fa;
+
+    /* Neutral palette */
+    --color-neutral-50: #f8fafc;
+    --color-neutral-100: #f1f5f9;
+    --color-neutral-200: #e2e8f0;
+    --color-neutral-300: #cbd5e1;
+    --color-neutral-400: #94a3b8;
+    --color-neutral-500: #64748b;
+    --color-neutral-700: #334155;
+    --color-neutral-800: #1e293b;
+    --color-neutral-900: #0f172a;
+
+    /* Semantic aliases */
+    --color-surface: #ffffff;
+    --color-surface-subtle: rgba(226, 232, 240, 0.8);
+    --color-bg: #f6f7f8;
+
+    /* Accent */
+    --color-accent: #f59e0b;
+
+    /* Shadows */
+    --shadow-glass: 0 4px 20px 0 rgba(0, 0, 0, 0.03);
+    --shadow-glow: 0 0 20px rgba(19, 127, 236, 0.4);
+
+    /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.5rem;
+    --radius-xl: 2rem;
+
+    /* Typography — single declaration point */
+    --font-primary: 'Lexend', 'Tajawal', sans-serif;
+
+    /* Transitions */
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------------------------------------------------------
+   2. TYPOGRAPHY & BASE RESET
+   --------------------------------------------------------- */
+body {
+    font-family: var(--font-primary);
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+/* ---------------------------------------------------------
+   3. SCROLLBAR
+   --------------------------------------------------------- */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-300);
+    border-radius: 10px;
+}
+
+/* ---------------------------------------------------------
+   4. FORM ELEMENTS
+   --------------------------------------------------------- */
+.stitch-input {
+    width: 100%;
+    height: 3.5rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    /* Split shorthand so callers can override individual sides with pr-* / pl-* */
+    padding-block: 0;
+    padding-inline: 1rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.stitch-input:focus {
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 2px rgba(19, 127, 236, 0.2);
+}
+
+/*
+   Styled SELECT component — for dropdowns that have an icon on the right
+   (filter/search icon) and a custom chevron arrow on the left.
+   Owns all padding + appearance directly so it never conflicts with
+   Tailwind utility layers or .stitch-input's padding-inline.
+*/
+.stitch-select {
+    width: 100%;
+    height: 3.5rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+    /* Force removal of Tailwind Forms plugin's background arrow */
+    background-image: none !important;
+    /* Remove OS-native arrow */
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    /* Physical padding guarantees no overlap with absolute-positioned icons */
+    /* Right side: clears the ri-filter-3-line icon */
+    padding-right: 3rem !important;
+    /* Left side: clears the ri-arrow-down-s-line custom chevron */
+    padding-left: 2.5rem !important;
+    padding-block: 0;
+    /* Prevent selected option text from overlapping icons */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.stitch-select:focus {
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 2px rgba(19, 127, 236, 0.2);
+}
+
+.stitch-select:hover {
+    border-color: var(--color-brand-500);
+}
+
+/* Compact select used in list items with a single chevron */
+.stitch-select-compact {
+    /* Compact select sits in RTL cards with a left chevron icon */
+    direction: rtl;
+    text-align: right;
+    text-align-last: right;
+    /* Force removal of Tailwind Forms' arrow */
+    background-image: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    padding-right: 0.75rem !important;
+    /* Extra padding on the left to clear the custom left-side arrow */
+    padding-left: 2.75rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------
+   5. APPLICATION VIEW VISIBILITY
+   Convention: .app-view--hidden hides views; JavaScript
+   toggles this class (or inline display) rather than
+   relying on the cascade to hide views by default.
+   --------------------------------------------------------- */
 .app-view {
     display: none;
 }
 
-.nav-btn.active {
-    color: #2563eb;
+/* ---------------------------------------------------------
+   6. NAVIGATION STATE
+   Using a controlled specificity approach — no !important.
+   --------------------------------------------------------- */
+
+/* Desktop top nav active button */
+.nav-btn.is-active {
+    color: var(--color-brand-600);
     font-weight: bold;
-    border-bottom: 3px solid #2563eb;
+    border-bottom: 3px solid var(--color-brand-600);
 }
 
-.nav-item.active {
-    color: #137fec !important;
+/* Mobile bottom nav active item */
+.nav__item.is-active {
+    color: var(--color-brand-500);
 }
 
-.nav-item.active .material-symbols-outlined {
+/* Parent-scoped selector eliminates need for !important */
+#admin-view .nav__item.is-active {
+    color: var(--color-brand-500);
+}
+
+.nav__item.is-active .material-symbols-outlined {
     font-variation-settings: 'FILL' 1;
 }
 
-/* Enhanced Animations & Micro-interactions optimized for performance */
+/* ---------------------------------------------------------
+   7. ANIMATION UTILITIES
+   will-change is deferred to :hover / JS-triggered states
+   to avoid unnecessary GPU layer promotion at rest.
+   --------------------------------------------------------- */
 .hover-scale {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+    transition: transform var(--transition-fast);
 }
 
 .hover-scale:hover {
+    will-change: transform;
     transform: translateY(-2px);
 }
 
-.fade-in {
-    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    will-change: opacity, transform;
+/* Reset will-change to free GPU memory after interaction */
+.hover-scale:not(:hover) {
+    will-change: auto;
 }
 
+.fade-in {
+    animation: fadeIn var(--transition-normal) forwards;
+}
+
+/* will-change applied only while animating (brief lifecycle) */
 @keyframes fadeIn {
     from {
+        will-change: opacity, transform;
         opacity: 0;
         transform: translateY(5px);
     }
@@ -74,101 +325,37 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+        will-change: auto;
     }
 }
 
+/* ---------------------------------------------------------
+   8. VISUAL COMPONENTS
+   Separated from state — glass-panel is purely visual.
+   --------------------------------------------------------- */
 .glass-panel {
-    background: #ffffff;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.03);
+    background: var(--color-surface);
+    border: 1px solid var(--color-surface-subtle);
+    box-shadow: var(--shadow-glass);
 }
 
 .gradient-text {
-    background: linear-gradient(135deg, #137fec, #60a5fa);
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-400));
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-@media print {
-    @page {
-        size: auto;
-        margin: 10mm;
-    }
+/* ---------------------------------------------------------
+   9. CUSTOM SCROLLBAR VARIANT
+   (Moved from inline <style> in index.html for
+   single-stylesheet management.)
+   --------------------------------------------------------- */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
 
-    html,
-    body {
-        background: white !important;
-        height: auto !important;
-        min-height: auto !important;
-        overflow: visible !important;
-        position: static !important;
-    }
-
-    body>* {
-        display: none !important;
-    }
-
-    body>.print-target {
-        display: block !important;
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        transform: none !important;
-    }
-
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-
-    .print-break-inside-avoid {
-        page-break-inside: avoid;
-        break-inside: avoid;
-    }
-
-    #reportModal.print-target {
-        background: none !important;
-        backdrop-filter: none !important;
-    }
-
-    #reportModalContent {
-        box-shadow: none !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        border: none !important;
-        background: white !important;
-    }
-
-    table.print-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    table.print-table th,
-    table.print-table td {
-        border: 1px solid #000;
-        padding: 12px;
-        text-align: center;
-        color: black;
-    }
-
-    table.print-table th {
-        background-color: #f1f5f9 !important;
-        color: black;
-    }
-
-    .court-header {
-        background-color: #cbd5e1 !important;
-        font-weight: bold;
-        color: black;
-    }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-300);
+    border-radius: 4px;
 }

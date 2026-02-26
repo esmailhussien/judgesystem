@@ -57,10 +57,10 @@ function logout() { location.reload(); }
 
 function showAdminScreen(id) {
     document.querySelectorAll('.admin-section').forEach(d => d.classList.add('hidden'));
-    document.querySelectorAll('#admin-view header .nav-btn').forEach(btn => { btn.classList.remove('active', 'text-blue-600'); btn.classList.add('text-slate-600'); });
-    const activeTopBtn = document.getElementById(`btn-admin-${id}`); if (activeTopBtn) { activeTopBtn.classList.add('active', 'text-blue-600'); activeTopBtn.classList.remove('text-slate-600'); }
-    document.querySelectorAll('#admin-view .nav-item').forEach(btn => { btn.classList.remove('active', 'text-primary'); btn.classList.add('text-slate-400'); });
-    const activeBotBtn = document.getElementById(`nav-admin-${id}`); if (activeBotBtn) { activeBotBtn.classList.add('active', 'text-primary'); activeBotBtn.classList.remove('text-slate-400'); }
+    document.querySelectorAll('#admin-view header .nav-btn').forEach(btn => { btn.classList.remove('is-active', 'text-blue-600'); btn.classList.add('text-slate-600'); });
+    const activeTopBtn = document.getElementById(`btn-admin-${id}`); if (activeTopBtn) { activeTopBtn.classList.add('is-active', 'text-blue-600'); activeTopBtn.classList.remove('text-slate-600'); }
+    document.querySelectorAll('#admin-view .nav__item').forEach(btn => { btn.classList.remove('is-active', 'text-primary'); btn.classList.add('text-slate-400'); });
+    const activeBotBtn = document.getElementById(`nav-admin-${id}`); if (activeBotBtn) { activeBotBtn.classList.add('is-active', 'text-primary'); activeBotBtn.classList.remove('text-slate-400'); }
     document.getElementById(`admin-screen-${id}`).classList.remove('hidden');
     if (id === 'dashboard') loadDashboard(); if (id === 'database') loadAllJudges(); if (id === 'records') loadRecords();
 }
@@ -74,15 +74,31 @@ async function loadDashboard() {
 
 // --- Nominate (Auto/Manual) ---
 function setNomMode(mode) {
-    nomMode = mode; currentSuggestions = []; renderSuggestions(); document.getElementById('resultsWrapper').classList.add('hidden');
+    nomMode = mode;
+    currentSuggestions = [];
+    renderSuggestions();
+    document.getElementById('resultsWrapper').classList.add('hidden');
+
+    const btnAuto = document.getElementById('btn-mode-auto');
+    const btnManual = document.getElementById('btn-mode-manual');
+
+    // Active button: filled background, white text, shadow
+    const activeClasses = ['bg-primary', 'text-white', 'shadow-md'];
+    // Inactive button: transparent background, muted text
+    const inactiveClasses = ['text-slate-600', 'hover:bg-white/80'];
+
     if (mode === 'auto') {
-        document.getElementById('btn-mode-auto').classList.replace('text-slate-500', 'text-primary'); document.getElementById('btn-mode-auto').classList.replace('hover:text-slate-800', 'bg-white'); document.getElementById('btn-mode-auto').classList.add('shadow-sm');
-        document.getElementById('btn-mode-manual').classList.replace('text-primary', 'text-slate-500'); document.getElementById('btn-mode-manual').classList.remove('bg-white', 'shadow-sm'); document.getElementById('btn-mode-manual').classList.add('hover:text-slate-800');
-        document.getElementById('auto-section').classList.remove('hidden'); document.getElementById('manual-section').classList.add('hidden'); document.getElementById('totalJudgesWrapper').classList.remove('hidden');
+        btnAuto.className = `px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeClasses.join(' ')}`;
+        btnManual.className = `px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${inactiveClasses.join(' ')}`;
+        document.getElementById('auto-section').classList.remove('hidden');
+        document.getElementById('manual-section').classList.add('hidden');
+        document.getElementById('totalJudgesWrapper').classList.remove('hidden');
     } else {
-        document.getElementById('btn-mode-manual').classList.replace('text-slate-500', 'text-primary'); document.getElementById('btn-mode-manual').classList.replace('hover:text-slate-800', 'bg-white'); document.getElementById('btn-mode-manual').classList.add('shadow-sm');
-        document.getElementById('btn-mode-auto').classList.replace('text-primary', 'text-slate-500'); document.getElementById('btn-mode-auto').classList.remove('bg-white', 'shadow-sm'); document.getElementById('btn-mode-auto').classList.add('hover:text-slate-800');
-        document.getElementById('auto-section').classList.add('hidden'); document.getElementById('manual-section').classList.remove('hidden'); document.getElementById('totalJudgesWrapper').classList.add('hidden');
+        btnManual.className = `px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeClasses.join(' ')}`;
+        btnAuto.className = `px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${inactiveClasses.join(' ')}`;
+        document.getElementById('auto-section').classList.add('hidden');
+        document.getElementById('manual-section').classList.remove('hidden');
+        document.getElementById('totalJudgesWrapper').classList.add('hidden');
     }
 }
 
@@ -131,15 +147,27 @@ function renderSuggestions() {
 async function saveFinalList() {
     if (isSaving || currentSuggestions.length === 0) return;
     const tournament = document.getElementById('tournamentName').value.trim();
-    if (!tournament) return Swal.fire('تنبيه', 'أدخل اسم البطولة أولاً', 'warning');
+    const tDate = document.getElementById('tournamentDate').value;
+    const tPlace = document.getElementById('tournamentPlace').value.trim();
+    const tDesc = document.getElementById('tournamentDesc').value.trim();
+
+    if (!tournament || !tDate || !tPlace) return Swal.fire('تنبيه', 'أدخل اسم وتاريخ ومكان البطولة أولاً', 'warning');
 
     const confirmedList = currentSuggestions.map(j => ({ id: j.JudgeID, name: j.Name, category: j.Category }));
     const { isConfirmed } = await Swal.fire({ title: 'إرسال الدعوات', text: 'سيتم إرسال دعوات للحكام المختارين في حساباتهم (ومدة الصلاحية 12 ساعة).', icon: 'question', showCancelButton: true, confirmButtonText: 'إرسال الآن' });
     if (!isConfirmed) return;
     isSaving = true; Swal.showLoading();
     try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'saveFinalList', data: { tournament, confirmed: confirmedList, apologized: [] } }) }).then(r => r.json());
-        if (res.status === 'success') { Swal.fire('تم الإرسال', 'تم الإرسال بنجاح. تابع الردود من شاشة السجلات.', 'success'); document.getElementById('resultsWrapper').classList.add('hidden'); document.getElementById('tournamentName').value = ''; currentSuggestions = []; }
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'saveFinalList', data: { tournament, tDate, tPlace, tDesc, confirmed: confirmedList, apologized: [] } }) }).then(r => r.json());
+        if (res.status === 'success') {
+            Swal.fire('تم الإرسال', 'تم الإرسال بنجاح. تابع الردود من شاشة السجلات.', 'success');
+            document.getElementById('resultsWrapper').classList.add('hidden');
+            document.getElementById('tournamentName').value = '';
+            document.getElementById('tournamentDate').value = '';
+            document.getElementById('tournamentPlace').value = '';
+            document.getElementById('tournamentDesc').value = '';
+            currentSuggestions = [];
+        }
     } catch (e) { } finally { isSaving = false; }
 }
 
@@ -219,11 +247,14 @@ function renderCourtDistribution() {
                                     <h5 class="text-sm font-bold text-slate-800">${item.j.name}</h5>
                                     <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded mt-1 inline-block">${item.j.cat}</span>
                                 </div>
-                                <div class="flex items-center justify-between border-t border-slate-200 pt-2">
-                                    <label class="text-[10px] text-slate-500 font-bold">نقل الحكم إلى:</label>
-                                    <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="text-xs border border-slate-300 rounded bg-white px-2 py-1 outline-none focus:border-primary font-bold text-slate-700">
-                                        ${courtOptions}
-                                    </select>
+                                <div class="flex items-center justify-between border-t border-slate-200 pt-2 gap-2">
+                                    <label class="text-[10px] text-slate-500 font-bold shrink-0">نقل إلى:</label>
+                                    <div class="relative">
+                                        <select onchange="changeDistributionCourt(${item.idx}, this.value)" class="stitch-select-compact appearance-none text-xs border border-slate-300 rounded-lg bg-white py-1.5 outline-none focus:border-primary font-bold text-slate-700 cursor-pointer w-full">
+                                            ${courtOptions}
+                                        </select>
+                                        <i class="ri-arrow-down-s-line absolute left-1.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+                                    </div>
                                 </div>
                             </div>
                         `).join('')}
@@ -278,10 +309,305 @@ function filterJudges() {
     const filtered = allJudgesData.filter(j => (j.Name.toLowerCase().includes(text)) && (cat === 'all' || j.Category.replace(/ى/g, 'ي').includes(cat.replace(/ى/g, 'ي'))));
     renderJudgesTable(filtered);
 }
+
 function renderJudgesTable(data) {
-    document.getElementById('allJudgesTableBody').innerHTML = data.map(j => `
-                <tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${j.Name}</td><td class="p-4 text-center"><span class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold">${j.Category}</span></td><td class="p-4 text-center"><button onclick="openReport('${j.JudgeID}')" class="text-primary hover:bg-primary/10 p-2 rounded-full"><i class="ri-eye-line text-xl"></i></button></td></tr>
-            `).join('');
+    document.getElementById('allJudgesTableBody').innerHTML = data.map(j => {
+        const isActive = (j.Active === true || String(j.Active).toUpperCase() === 'TRUE');
+        const statusIcon = isActive ? '<i class="ri-toggle-fill text-green-500 text-2xl leading-none"></i>' : '<i class="ri-toggle-line text-slate-400 text-2xl leading-none"></i>';
+        const activeLabel = isActive ? 'نشط' : 'إيقاف';
+
+        return `
+            <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0">
+                <td class="p-4 font-bold text-slate-700">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'} shadow-[0_0_8px_rgba(0,0,0,0.15)] ${isActive ? 'shadow-green-500/50' : 'shadow-red-500/50'}"></div>
+                        ${j.Name}
+                    </div>
+                </td>
+                <td class="p-4 text-center">
+                    <span class="bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-xs font-bold border border-primary/20 block w-max mx-auto">${j.Category}</span>
+                </td>
+                <td class="p-4 text-center">
+                    <button onclick="openReport('${j.JudgeID}')" class="text-primary bg-blue-50 hover:bg-primary shadow-sm hover:shadow-md hover:shadow-primary/30 hover:text-white p-2.5 rounded-xl transition-all" title="السجل والملف">
+                        <i class="ri-eye-line text-xl"></i>
+                    </button>
+                </td>
+                <td class="p-4 text-center">
+                    <div class="flex items-center justify-center gap-2">
+                        <button onclick="editJudgeProfileUI('${j.JudgeID}')" class="text-slate-600 bg-slate-100 hover:bg-slate-800 hover:text-white px-3 py-2 rounded-xl transition-all shadow-sm hover:shadow-md border border-slate-200" title="تعديل البيانات">
+                            <i class="ri-edit-line text-lg"></i> تعديل
+                        </button>
+                        <button onclick="toggleJudgeStatusUI('${j.JudgeID}', ${isActive})" class="flex items-center gap-2 ${isActive ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-slate-600 bg-slate-100 border-slate-200'} border px-3 py-1.5 rounded-xl transition-all shadow-sm hover:shadow-md" title="التبديل">
+                            ${statusIcon} <span class="text-sm font-bold min-w-[32px]">${activeLabel}</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function toggleJudgeStatusUI(judgeId, currentStatus) {
+    const isActive = (currentStatus === true || String(currentStatus).toUpperCase() === 'TRUE');
+    const newStatus = !isActive;
+    const actionText = newStatus ? "تفعيل" : "إيقاف";
+
+    const { isConfirmed } = await Swal.fire({
+        title: `تأكيد ال${actionText}`,
+        text: `هل أنت متأكد من ${actionText} حساب هذا الحكم؟`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، متأكد',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: newStatus ? '#10b981' : '#ef4444' // emerald/red
+    });
+
+    if (isConfirmed) {
+        Swal.fire({ title: 'جاري التحديث...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'toggleJudgeStatus', data: { judgeId: judgeId, status: newStatus } })
+            }).then(r => r.json());
+
+            if (res.status === 'success') {
+                Swal.fire('تم بنجاح', 'تم تحديث حالة الحكم بنجاح', 'success');
+                loadAllJudges();
+                loadDashboard(); // Refresh KPI
+            } else {
+                Swal.fire('خطأ', res.message, 'error');
+            }
+        } catch (e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
+    }
+}
+
+async function editJudgeProfileUI(judgeId) {
+    const judge = allJudgesData.find(j => String(j.JudgeID) === String(judgeId));
+    if (!judge) return;
+
+    const { value: formValues } = await Swal.fire({
+        title: '<div class="flex items-center gap-2 justify-center"><i class="ri-user-settings-line text-primary border-b-2 border-primary pb-2"></i> تعديل بيانات الحكم</div>',
+        html: `
+            <div class="text-right space-y-5 text-sm px-2 mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">اسم الحكم الرباعي</label>
+                    <input id="edit-name" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" value="${judge.Name || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">رقم الهاتف (واتساب / تسجيل الدخول)</label>
+                    <input id="edit-phone" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-left transition-all shadow-sm" value="${judge.Phone || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الفئة / التصنيف</label>
+                    <div class="relative">
+                        <select id="edit-category" class="appearance-none w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white font-bold text-slate-700 transition-all shadow-sm">
+                            <option value="دولي" ${judge.Category === 'دولي' ? 'selected' : ''}>دولي</option>
+                            <option value="قاري" ${judge.Category === 'قاري' ? 'selected' : ''}>قاري</option>
+                            <option value="اولى" ${judge.Category === 'اولى' ? 'selected' : ''}>اولى</option>
+                            <option value="ثانية" ${judge.Category === 'ثانية' ? 'selected' : ''}>ثانية</option>
+                            <option value="ثالثة" ${judge.Category === 'ثالثة' ? 'selected' : ''}>ثالثة</option>
+                        </select>
+                        <i class="ri-arrow-down-s-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">رقم الهوية / الرقم القومي</label>
+                    <input id="edit-national" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-left transition-all shadow-sm" value="${judge.NationalID || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">المؤهل الدراسي (Educational)</label>
+                    <input id="edit-educational" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" value="${judge.Educational || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الدرجة / الحزام (Belt)</label>
+                    <input id="edit-belt" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" value="${judge.Belt || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">سنة الحصول على الدرجة</label>
+                    <input id="edit-degreeyear" type="number" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" value="${judge['Year of the degree'] || ''}">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الوظيفة (Job)</label>
+                    <input id="edit-job" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" value="${judge.Job || ''}">
+                </div>
+            </div>
+            <div class="mt-6 border-t border-slate-200 pt-4 flex justify-between items-center">
+                 <button onclick="deleteJudgeUI('${judge.JudgeID}')" class="text-red-500 font-bold hover:bg-red-50 px-4 py-2 rounded-xl transition-all"><i class="ri-delete-bin-line"></i> حذف نهائي</button>
+            </div>
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'حفظ التحديثات',
+        cancelButtonText: 'إلغاء الأمر',
+        confirmButtonColor: '#137fec',
+        customClass: { popup: 'rounded-[2rem] p-6 !w-[500px]', confirmButton: 'font-bold px-6 py-3 rounded-xl', cancelButton: 'font-bold px-6 py-3 rounded-xl bg-slate-200 text-slate-700' },
+        preConfirm: () => {
+            const name = document.getElementById('edit-name').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const nationalId = document.getElementById('edit-national').value.trim();
+            if (!name || !phone || !nationalId) {
+                Swal.showValidationMessage("الاسم، الهاتف، والرقم القومي إجبارية");
+                return false;
+            }
+            return {
+                Name: name,
+                Phone: phone,
+                Category: document.getElementById('edit-category').value.trim(),
+                NationalID: nationalId,
+                Educational: document.getElementById('edit-educational').value.trim(),
+                Belt: document.getElementById('edit-belt').value.trim(),
+                "Year of the degree": document.getElementById('edit-degreeyear').value.trim(),
+                Job: document.getElementById('edit-job').value.trim()
+            };
+        }
+    });
+
+    if (formValues) {
+        Swal.fire({ title: 'جاري الحفظ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateJudgeProfile', data: { judgeId: judgeId, updates: formValues } })
+            }).then(r => r.json());
+
+            if (res.status === 'success') {
+                Swal.fire('تم بنجاح', 'لقد تم تحديث بيانات الحكم', 'success');
+                loadAllJudges();
+            } else {
+                Swal.fire('خطأ', res.message, 'error');
+            }
+        } catch (e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
+    }
+}
+
+async function deleteJudgeUI(judgeId) {
+    const { isConfirmed } = await Swal.fire({
+        title: 'تأكيد الحذف النهائي',
+        text: 'هل أنت متأكد من رغبتك في حذف هذا الحكم نهائياً؟ لا يمكن التراجع عن هذا الإجراء.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'نعم، احذف',
+        cancelButtonText: 'تراجع'
+    });
+    if (isConfirmed) {
+        Swal.fire({ title: 'جاري الحذف...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'deleteJudge', data: { judgeId: judgeId } })
+            }).then(r => r.json());
+
+            if (res.status === 'success') {
+                Swal.fire('تم الحذف', 'تم مسح سجل الحكم بنجاح', 'success');
+                loadAllJudges();
+                loadDashboard();
+            } else {
+                Swal.fire('خطأ', res.message, 'error');
+            }
+        } catch (e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
+    }
+}
+
+async function addNewJudgeUI() {
+    const { value: formValues } = await Swal.fire({
+        title: '<div class="flex items-center gap-2 justify-center"><i class="ri-user-add-line text-primary border-b-2 border-primary pb-2"></i> إضافة حكم جديد</div>',
+        html: `
+            <div class="text-right space-y-4 text-sm px-2 mt-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">رقم قيد الحكم (ID فريد) <span class="text-red-500">*</span></label>
+                    <input id="add-id" type="number" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" placeholder="مثال: 1234">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الاسم الرباعي <span class="text-red-500">*</span></label>
+                    <input id="add-name" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">رقم الهاتف <span class="text-red-500">*</span></label>
+                    <input id="add-phone" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-left transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الرقم القومي <span class="text-red-500">*</span></label>
+                    <input id="add-national" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-left transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الفئة / التصنيف</label>
+                    <div class="relative">
+                        <select id="add-category" class="appearance-none w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white font-bold text-slate-700 transition-all shadow-sm">
+                            <option value="دولي">دولي</option>
+                            <option value="قاري">قاري</option>
+                            <option value="اولى" selected>اولى</option>
+                            <option value="ثانية">ثانية</option>
+                            <option value="ثالثة">ثالثة</option>
+                        </select>
+                        <i class="ri-arrow-down-s-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">المؤهل الدراسي</label>
+                    <input id="add-educational" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary outline-none transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الدرجة / الحزام</label>
+                    <input id="add-belt" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary outline-none transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">سنة الحصول على الدرجة</label>
+                    <input id="add-degreeyear" type="number" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary outline-none transition-all shadow-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">الوظيفة</label>
+                    <input id="add-job" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-primary outline-none transition-all shadow-sm">
+                </div>
+            </div>
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'إنشاء ملف الحكم',
+        cancelButtonText: 'إلغاء الأمر',
+        confirmButtonColor: '#137fec',
+        customClass: { popup: 'rounded-[2rem] p-6 !w-[500px]', confirmButton: 'font-bold px-6 py-3 rounded-xl', cancelButton: 'font-bold px-6 py-3 rounded-xl bg-slate-200 text-slate-700' },
+        preConfirm: () => {
+            const judgeId = document.getElementById('add-id').value.trim();
+            const name = document.getElementById('add-name').value.trim();
+            const phone = document.getElementById('add-phone').value.trim();
+            const nationalId = document.getElementById('add-national').value.trim();
+            if (!judgeId || !name || !phone || !nationalId) {
+                Swal.showValidationMessage("تم تمييز الحقول الإجبارية (*)");
+                return false;
+            }
+            return {
+                JudgeID: judgeId,
+                Name: name,
+                Phone: phone,
+                Category: document.getElementById('add-category').value.trim(),
+                NationalID: nationalId,
+                Educational: document.getElementById('add-educational').value.trim(),
+                Belt: document.getElementById('add-belt').value.trim(),
+                "Year of the degree": document.getElementById('add-degreeyear').value.trim(),
+                Job: document.getElementById('add-job').value.trim(),
+                Active: true
+            };
+        }
+    });
+
+    if (formValues) {
+        Swal.fire({ title: 'جاري إنشاء الحكم...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'addJudge', data: { judgeData: formValues } })
+            }).then(r => r.json());
+
+            if (res.status === 'success') {
+                Swal.fire('تم بنجاح', res.data || 'تم إنشاء الحكم بنجاح', 'success');
+                loadAllJudges();
+                loadDashboard();
+            } else {
+                Swal.fire('خطأ', res.message, 'error');
+            }
+        } catch (e) { Swal.fire('خطأ', 'حدث خطأ في الاتصال', 'error'); }
+    }
 }
 
 // --- Referee Functions ---
@@ -296,7 +622,14 @@ async function loadMyInvitations() {
                 const buttonsHtml = isConfirmed
                     ? `<div class="bg-green-50 text-green-700 p-3 rounded-xl text-center text-sm font-bold border border-green-200">لقد أتممت قبول الدعوة بنجاح. نتمنى لك التوفيق في البطولة!</div>`
                     : `<div class="flex gap-3"><button onclick="respondInvite('${inv.tournament}', 'accept')" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-sm"><i class="ri-checkbox-circle-line align-middle ml-1 text-sm"></i> قبول</button><button onclick="respondInvite('${inv.tournament}', 'decline')" class="flex-1 bg-red-50 hover:bg-red-500 hover:text-white text-red-600 font-bold py-3 rounded-xl transition-all border border-red-200 shadow-sm"><i class="ri-close-circle-line align-middle ml-1 text-sm"></i> اعتذار</button></div>`;
-                return `<div class="bg-white p-5 rounded-2xl border-2 ${isConfirmed ? 'border-green-200' : 'border-orange-200'} shadow-md relative overflow-hidden">${statusBadge}<h3 class="font-bold text-lg text-slate-800 mt-4 mb-2"><i class="ri-football-line text-primary align-middle ml-1"></i> ${inv.tournament}</h3><p class="text-xs text-slate-500 mb-5">تاريخ الإرسال: ${inv.date}</p>${buttonsHtml}</div>`;
+                return `<div class="bg-white p-5 rounded-2xl border-2 ${isConfirmed ? 'border-green-200' : 'border-orange-200'} shadow-md relative overflow-hidden">${statusBadge}
+                <h3 class="font-bold text-lg text-slate-800 mt-4 mb-2"><i class="ri-football-line text-primary align-middle ml-1"></i> ${inv.tournament}</h3>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs text-slate-600 mb-5 space-y-2">
+                   <p><i class="ri-calendar-event-line text-primary ml-1"></i> <b>التاريخ:</b> ${inv.tDate || 'غير محدد'}</p>
+                   <p><i class="ri-map-pin-line text-primary ml-1"></i> <b>المكان:</b> ${inv.tPlace || 'غير محدد'}</p>
+                   ${inv.tDesc ? `<p><i class="ri-sticky-note-line text-primary ml-1"></i> <b>ملاحظة:</b> <span class="text-slate-500">${inv.tDesc}</span></p>` : ''}
+                </div>
+                ${buttonsHtml}</div>`;
             }).join('');
         } else { area.innerHTML = `<div class="bg-white rounded-3xl p-6 border shadow-sm text-center"><div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="ri-check-double-line text-3xl text-primary"></i></div><h2 class="font-bold text-lg text-slate-800">لا توجد دعوات حالياً</h2></div>`; }
     } catch (e) { }
@@ -320,15 +653,69 @@ async function openReport(id) {
     try {
         const res = await fetch(`${API_URL}&action=getJudgeProfile&id=${id}`).then(r => r.json());
         if (res.status === 'success') {
-            const info = res.data.info || {}; const history = res.data.history || [];
+            const info = res.data.info || {};
+            const history = res.data.history || { total: 0, confirmed: [], apologized: [] };
+
             document.getElementById('r-photo').src = info.Photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(info.Name)}&background=fff&color=137fec`;
-            document.getElementById('r-name').innerText = info.Name; document.getElementById('r-category').innerText = info.Category;
-            document.getElementById('r-nationalId').innerText = info.NationalID; document.getElementById('r-phone').innerText = info.Phone;
-            document.getElementById('r-belt').innerText = info.Belt; document.getElementById('r-assignCount').innerText = info.AssignCount || 0;
-            document.getElementById('r-historyList').innerHTML = history.length ? history.map(h => `<li class="flex justify-between py-2 border-b last:border-0"><span class="font-bold">${h.tournament}</span><span class="text-slate-400 text-[10px]">${h.date}</span></li>`).join('') : '<li class="text-center text-slate-400 py-2">لا توجد مشاركات</li>';
-            document.getElementById('reportModal').classList.remove('hidden'); Swal.close();
+            document.getElementById('r-name').innerText = info.Name;
+            document.getElementById('r-category').innerText = info.Category;
+            document.getElementById('r-nationalId').innerText = info.NationalID;
+            document.getElementById('r-phone').innerText = info.Phone;
+            document.getElementById('r-belt').innerText = info.Belt;
+            document.getElementById('r-assignCount').innerText = history.total || 0;
+
+            let histHtml = '';
+
+            if (history.confirmed && history.confirmed.length > 0) {
+                histHtml += `<div class="text-green-600 font-bold mb-2 mt-2 text-xs bg-green-50 p-2 rounded-lg border border-green-100 flex items-center justify-between"><span>التأكيد <i class="ri-check-line"></i></span><span class="bg-white px-2 py-0.5 rounded-full">${history.confirmed.length} مشاركة</span></div>`;
+                histHtml += history.confirmed.map(h => `<li class="py-3 border-b border-slate-100 last:border-0">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold flex items-center gap-2"><i class="ri-checkbox-circle-fill text-green-500 text-lg"></i> <span class="break-words line-clamp-1">${h.tournament}</span></span>
+                    <span class="text-slate-500 text-[10px] bg-slate-100 px-2 py-1 rounded-md font-bold shrink-0">${h.tDate || h.date}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 pr-7 space-y-1 mt-1 font-medium">
+                    <p><i class="ri-map-pin-line ml-1 text-slate-400"></i> ${h.tPlace || 'غير محدد'}</p>
+                    ${h.tDesc && h.tDesc !== 'لا يوجد' ? `<p><i class="ri-sticky-note-line ml-1 text-slate-400"></i> ${h.tDesc}</p>` : ''}
+                  </div>
+                </li>`).join('');
+            }
+
+            if (history.apologized && history.apologized.length > 0) {
+                histHtml += `<div class="text-red-500 font-bold mt-4 mb-2 text-xs bg-red-50 p-2 rounded-lg border border-red-100 flex items-center justify-between"><span>الاعتذار <i class="ri-close-line"></i></span><span class="bg-white px-2 py-0.5 rounded-full">${history.apologized.length} مرة</span></div>`;
+                histHtml += history.apologized.map(h => `<li class="py-3 border-b border-slate-100 last:border-0">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold flex items-center gap-2"><i class="ri-close-circle-fill text-red-500 text-lg"></i> <span class="break-words line-clamp-1">${h.tournament}</span></span>
+                    <span class="text-slate-500 text-[10px] bg-slate-100 px-2 py-1 rounded-md font-bold shrink-0">${h.tDate || h.date}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 pr-7 space-y-1 mt-1 font-medium">
+                    <p><i class="ri-map-pin-line ml-1 text-slate-400"></i> ${h.tPlace || 'غير محدد'}</p>
+                    ${h.tDesc && h.tDesc !== 'لا يوجد' ? `<p><i class="ri-sticky-note-line ml-1 text-slate-400"></i> ${h.tDesc}</p>` : ''}
+                  </div>
+                </li>`).join('');
+            }
+
+            if (!histHtml) histHtml = '<li class="text-center text-slate-400 py-4 font-bold bg-slate-50 rounded-xl border border-slate-100">لا توجد مشاركات أو اعتذارات مسجلة</li>';
+
+            document.getElementById('r-historyList').innerHTML = histHtml;
+            document.getElementById('reportModal').classList.remove('hidden');
+            Swal.close();
         }
     } catch (e) { }
 }
 function closeReport() { document.getElementById('reportModal').classList.add('hidden'); }
 function printReport() { executePrint('reportModal', false); }
+
+// --- ESC key + backdrop-click to close any open modal ---
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!document.getElementById('courtDistributionModal').classList.contains('hidden')) { closeCourtDistribution(); return; }
+    if (!document.getElementById('reportModal').classList.contains('hidden')) { closeReport(); return; }
+});
+
+// Backdrop click — only fire when the click target IS the backdrop overlay itself
+document.getElementById('courtDistributionModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeCourtDistribution();
+});
+document.getElementById('reportModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeReport();
+});

@@ -1,0 +1,96 @@
+/* =========================================================
+   PRINT STYLESHEET — print.css
+   Loaded exclusively for print media via:
+     <link rel="stylesheet" href="css/print.css" media="print">
+   Keeps print concerns isolated from the screen cascade.
+   ========================================================= */
+
+@page {
+    size: auto;
+    margin: 10mm;
+}
+
+/* Reset document for print */
+html,
+body {
+    background: white !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+}
+
+/* Hide everything by default … */
+body>* {
+    display: none !important;
+}
+
+/* … then reveal only the designated print target */
+body>.print-target {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* Ensure colours render faithfully on paper */
+* {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+/* Utility: hide non-printable elements */
+.no-print {
+    display: none !important;
+}
+
+/* Utility: keep content together across page breaks */
+.print-break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Report modal used as print target — strip overlay styles */
+#reportModal.print-target {
+    background: none !important;
+    backdrop-filter: none !important;
+}
+
+#reportModalContent {
+    box-shadow: none !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    border: none !important;
+    background: white !important;
+}
+
+/* Print table — judge assignment list */
+table.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table.print-table th,
+table.print-table td {
+    border: 1px solid #000;
+    padding: 12px;
+    text-align: center;
+    color: black;
+}
+
+table.print-table th {
+    background-color: #f1f5f9 !important;
+    color: black;
+}
+
+/* Court section header row */
+.court-header {
+    background-color: #cbd5e1 !important;
+    font-weight: bold;
+    color: black;
+}

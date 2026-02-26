@@ -30,21 +30,27 @@
         }
     </script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
 </head>
 
 <body class="text-slate-900 pb-24 bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0]" onload="initApp()">
 
     <div id="login-view" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
         <!-- Background Decorations -->
-        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full blur-xl opacity-30 transform-gpu"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full blur-xl opacity-30 transform-gpu"></div>
+        <div
+            class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full blur-xl opacity-30 transform-gpu">
+        </div>
+        <div
+            class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full blur-xl opacity-30 transform-gpu">
+        </div>
 
         <div
             class="glass-panel p-8 rounded-[2rem] shadow-glass w-full max-w-md border border-white/50 relative z-10 fade-in">
             <div class="text-center mb-10">
                 <div
                     class="bg-gradient-to-tr from-primary to-blue-400 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-glow hover-scale">
-                    <i class="ri-whistle-line text-5xl text-white"></i></div>
+                    <i class="ri-whistle-line text-5xl text-white"></i>
+                </div>
                 <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">بوابة الحكام الإلكترونية</h1>
                 <p class="text-md text-slate-500 mt-2 font-medium">نظام الإدارة المركزية الموحد</p>
             </div>
@@ -88,7 +94,7 @@
                 </div>
                 <div class="flex space-x-2 space-x-reverse h-full items-center">
                     <button onclick="showAdminScreen('dashboard')" id="btn-admin-dashboard"
-                        class="nav-btn active h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
+                        class="nav-btn is-active h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
                             class="ri-dashboard-line text-lg"></i> الإحصائيات</button>
                     <button onclick="showAdminScreen('nominate')" id="btn-admin-nominate"
                         class="nav-btn h-full px-4 text-slate-600 font-semibold hover:text-primary transition-colors flex items-center gap-2 rounded-lg hover:bg-slate-50 mx-1"><i
@@ -129,7 +135,8 @@
                     <div class="glass-panel p-6 rounded-[1.5rem] text-center hover-scale group cursor-default">
                         <div
                             class="bg-blue-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
-                            <i class="ri-group-line text-3xl text-blue-500"></i></div>
+                            <i class="ri-group-line text-3xl text-blue-500"></i>
+                        </div>
                         <p class="text-slate-500 text-sm font-bold mt-2">إجمالي الحكام</p>
                         <h3 class="text-4xl font-extrabold text-slate-800 mt-1" id="kpi-total">-</h3>
                     </div>
@@ -137,7 +144,8 @@
                         class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-green-400 text-center hover-scale group cursor-default">
                         <div
                             class="bg-green-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-100 transition-colors">
-                            <i class="ri-checkbox-circle-line text-3xl text-green-500"></i></div>
+                            <i class="ri-checkbox-circle-line text-3xl text-green-500"></i>
+                        </div>
                         <p class="text-slate-500 text-sm font-bold mt-2">نشط الآن</p>
                         <h3 class="text-4xl font-extrabold text-green-600 mt-1" id="kpi-active">-</h3>
                     </div>
@@ -145,16 +153,17 @@
                         class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-red-400 text-center hover-scale group cursor-default">
                         <div
                             class="bg-red-50 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-red-100 transition-colors">
-                            <i class="ri-close-circle-line text-3xl text-red-500"></i></div>
+                            <i class="ri-close-circle-line text-3xl text-red-500"></i>
+                        </div>
                         <p class="text-slate-500 text-sm font-bold mt-2">غير متاح</p>
                         <h3 class="text-4xl font-extrabold text-red-500 mt-1" id="kpi-inactive">-</h3>
                     </div>
                     <div
                         class="glass-panel p-6 rounded-[1.5rem] border-t-4 border-t-accent bg-orange-50/50 text-center hover-scale group cursor-default relative overflow-hidden">
-                        <div class="absolute -right-4 -top-4 opacity-5"><i class="ri-time-line text-8xl"></i></div>
                         <div
                             class="bg-orange-100 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-orange-200 transition-colors relative z-10">
-                            <i class="ri-loader-2-line text-3xl text-orange-500 animate-spin-slow"></i></div>
+                            <i class="ri-loader-2-line text-3xl text-orange-500 animate-spin-slow"></i>
+                        </div>
                         <p class="text-orange-700 text-sm font-bold mt-2 relative z-10">دعوات قيد الانتظار</p>
                         <h3 class="text-4xl font-extrabold text-orange-600 mt-1 relative z-10" id="kpi-pending">-</h3>
                     </div>
@@ -167,11 +176,15 @@
                     <div
                         class="bg-white/60 backdrop-blur-sm p-1.5 rounded-2xl w-max mx-auto shadow-sm border border-slate-200 flex gap-1">
                         <button type="button" id="btn-mode-auto" onclick="setNomMode('auto')"
-                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-md transition-all flex items-center gap-2"><i
-                                class="ri-magic-line"></i> ترشيح ذكي</button>
+                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-md transition-all flex items-center gap-2">
+                            <i class="ri-magic-line" id="icon-mode-auto"></i>
+                            <span id="label-mode-auto">ترشيح ذكي</span>
+                        </button>
                         <button type="button" id="btn-mode-manual" onclick="setNomMode('manual')"
-                            class="px-8 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/80 transition-all flex items-center gap-2"><i
-                                class="ri-user-add-line"></i> تحديد يدوي</button>
+                            class="px-8 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/80 transition-all flex items-center gap-2">
+                            <i class="ri-user-add-line" id="icon-mode-manual"></i>
+                            <span id="label-mode-manual">تحديد يدوي</span>
+                        </button>
                     </div>
                 </div>
 
@@ -183,7 +196,7 @@
                                 <i class="ri-trophy-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                                 <input type="text" id="tournamentName"
                                     class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50"
-                                    placeholder="مثال: بطولة الجمهورية للناشئين">
+                                    placeholder="مثال: بطولة الجمهورية للناشئين" required>
                             </div>
                         </div>
                         <div id="totalJudgesWrapper">
@@ -192,6 +205,33 @@
                                 <i class="ri-team-line absolute right-4 top-1/2 -translate-y-1/2 text-primary"></i>
                                 <input type="number" id="totalJudges" value="0" min="1"
                                     class="stitch-input pl-4 pr-12 font-bold text-2xl text-primary text-center">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">تاريخ البطولة</label>
+                            <div class="relative">
+                                <i
+                                    class="ri-calendar-2-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="date" id="tournamentDate"
+                                    class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">مكان البطولة</label>
+                            <div class="relative">
+                                <i class="ri-map-pin-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="tournamentPlace"
+                                    class="stitch-input pl-4 pr-12 focus:ring-2 focus:ring-primary/50"
+                                    placeholder="مثال: الصالة المغطاة، نادي كذا..." required>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">ملاحظات والتفاصيل</label>
+                            <div class="relative">
+                                <i class="ri-sticky-note-line absolute right-4 top-4 text-slate-400"></i>
+                                <textarea id="tournamentDesc" rows="2"
+                                    class="stitch-input pl-4 pr-12 pt-3 focus:ring-2 focus:ring-primary/50"
+                                    placeholder="أضف أي تفاصيل هامة أو تعليمات خاصة بالحكام..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -296,10 +336,9 @@
                             <input type="text" id="searchJudgeName" onkeyup="filterJudges()"
                                 placeholder="ابحث عن حكم بالاسم..." class="stitch-input pr-12 w-full">
                         </div>
-                        <div class="relative w-full md:w-48">
+                        <div class="relative w-full md:w-36 shrink-0">
                             <i class="ri-filter-3-line absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <select id="filterCategory" onchange="filterJudges()"
-                                class="stitch-input pr-12 w-full appearance-none bg-white cursor-pointer hover:border-primary transition-colors">
+                            <select id="filterCategory" onchange="filterJudges()" class="stitch-select w-full bg-white">
                                 <option value="all">كل الفئات</option>
                                 <option value="دولي">دولي</option>
                                 <option value="قاري">قاري</option>
@@ -310,6 +349,10 @@
                             <i
                                 class="ri-arrow-down-s-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
                         </div>
+                        <button onclick="addNewJudgeUI()"
+                            class="bg-primary hover:bg-blue-600 text-white px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all font-bold flex items-center justify-center gap-2 shrink-0 h-[48px] md:h-auto">
+                            <i class="ri-user-add-line text-lg"></i> إضافة حكم جديد
+                        </button>
                     </div>
                 </div>
                 <div class="glass-panel rounded-[2rem] overflow-hidden shadow-sm">
@@ -320,6 +363,7 @@
                                     <th class="p-5 font-bold text-slate-600">اسم الحكم</th>
                                     <th class="p-5 text-center font-bold text-slate-600">التصنيف</th>
                                     <th class="p-5 text-center font-bold text-slate-600">الملف الشخصي</th>
+                                    <th class="p-5 text-center font-bold text-slate-600">إدارة الإعدادات</th>
                                 </tr>
                             </thead>
                             <tbody id="allJudgesTableBody"
@@ -335,22 +379,22 @@
             class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-sm border-t border-slate-200 pb-safe no-print md:hidden shadow-sm border-t border-slate-200 rounded-t-3xl">
             <div class="flex px-2 pb-3 pt-3 max-w-md mx-auto justify-around">
                 <a href="#" onclick="showAdminScreen('dashboard')" id="nav-admin-dashboard"
-                    class="nav-item active flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                    class="nav__item is-active flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
                         class="ri-dashboard-fill text-2xl"></i>
                     <p class="text-[11px] font-bold">الرئيسية</p>
                 </a>
                 <a href="#" onclick="showAdminScreen('nominate')" id="nav-admin-nominate"
-                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                    class="nav__item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
                         class="ri-user-add-fill text-2xl"></i>
                     <p class="text-[11px] font-bold">ترشيح</p>
                 </a>
                 <a href="#" onclick="showAdminScreen('records')" id="nav-admin-records"
-                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                    class="nav__item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
                         class="ri-history-line text-2xl"></i>
                     <p class="text-[11px] font-bold">السجلات</p>
                 </a>
                 <a href="#" onclick="showAdminScreen('database')" id="nav-admin-database"
-                    class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
+                    class="nav__item flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors p-2 rounded-xl"><i
                         class="ri-team-fill text-2xl"></i>
                     <p class="text-[11px] font-bold">الحكام</p>
                 </a>
@@ -470,7 +514,8 @@
                             <div
                                 class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-100">
                                 <span class="text-slate-500 font-medium"><i class="ri-id-card-line ml-1"></i> الرقم
-                                    القومي</span><span id="r-nationalId" class="font-bold text-slate-700">-</span></div>
+                                    القومي</span><span id="r-nationalId" class="font-bold text-slate-700">-</span>
+                            </div>
                             <div
                                 class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-100">
                                 <span class="text-slate-500 font-medium"><i class="ri-smartphone-line ml-1"></i>
@@ -520,16 +565,7 @@
     </div>
 
     <script src="js/script.js"></script>
-    <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-    </style>
+    <!-- Custom scrollbar styles are defined in css/style.css (.custom-scrollbar) -->
 </body>
 
 </html>
